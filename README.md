@@ -4,6 +4,8 @@
 - `RealEstate/`: Nestly rental app (`realestate` schema).
 - `supabase/`: canonical database migrations, schema baseline, and integration checks for their shared Supabase project.
 
+To run the isolated database baseline/isolation test, run `bun install --frozen-lockfile` and `bun run test:database` from the root. This uses an in-memory Postgres runtime and never connects to the live project.
+
 See [database workflow](supabase/README.md) before any database deployment. Existing `.env` files configure both apps for the same CRM project; never commit secrets.
 
 ## Local development

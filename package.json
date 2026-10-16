@@ -1,0 +1,7 @@
+{
+  "name": "crm-database-checks",
+  "private": true,
+  "type": "module",
+  "scripts": { "test:database": "node scripts/verify-baseline.mjs" },
+  "devDependencies": { "@electric-sql/pglite": "0.5.10" }
+}

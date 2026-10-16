@@ -63,8 +63,11 @@ export const estate = () => (supabase as SupabaseClient).schema("realestate");
 
 export async function fetchListings(): Promise<Listing[]> {
   if (demoMode) return sampleListings;
-  const { data, error } = await estate().from("listings").select("*")
-    .eq("status", "active").order("found_at", { ascending: false });
+  const { data, error } = await estate()
+    .from("listings")
+    .select("*")
+    .eq("status", "active")
+    .order("found_at", { ascending: false });
   if (error) throw new Error(error.message);
   return ((data ?? []) as ListingRow[]).map(toListing);
 }

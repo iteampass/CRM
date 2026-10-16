@@ -1,6 +1,17 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
-import { Bell, Compass, Heart, LineChart, Map, Search, Settings, Shield, Bookmark, Building2 } from "lucide-react";
+import {
+  Bell,
+  Compass,
+  Heart,
+  LineChart,
+  Map,
+  Search,
+  Settings,
+  Shield,
+  Bookmark,
+  Building2,
+} from "lucide-react";
 
 import { useAuth } from "@/lib/auth";
 import { demoMode } from "@/lib/data";
@@ -20,7 +31,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen w-full bg-background">
       <aside className="sticky top-0 hidden h-screen w-20 flex-col items-center gap-2 border-r bg-card py-5 md:flex">
-        <Link to="/" className="mb-4 grid h-11 w-11 place-items-center rounded-xl bg-primary text-primary-foreground" aria-label="Home">
+        <Link
+          to="/"
+          className="mb-4 grid h-11 w-11 place-items-center rounded-xl bg-primary text-primary-foreground"
+          aria-label="Home"
+        >
           <Building2 className="h-5 w-5" />
         </Link>
         {nav.map((n) => (
@@ -36,7 +51,13 @@ export function AppShell({ children }: { children: ReactNode }) {
           </Link>
         ))}
         <div className="flex-1" />
-        <Link to="/admin" title="Admin" aria-label="Admin" className="grid h-12 w-12 place-items-center rounded-xl text-muted-foreground hover:bg-muted" activeProps={{ className: "!bg-accent !text-accent-foreground" }}>
+        <Link
+          to="/admin"
+          title="Admin"
+          aria-label="Admin"
+          className="grid h-12 w-12 place-items-center rounded-xl text-muted-foreground hover:bg-muted"
+          activeProps={{ className: "!bg-accent !text-accent-foreground" }}
+        >
           <Shield className="h-5 w-5" />
         </Link>
       </aside>
@@ -46,22 +67,51 @@ export function AppShell({ children }: { children: ReactNode }) {
             <span className="rounded-full bg-accent px-5 py-2 text-accent-foreground">Rent</span>
           </div>
           <div className="flex max-w-md flex-1 items-center rounded-full bg-muted pl-5">
-            <input defaultValue="Belgrade" className="flex-1 bg-transparent py-2.5 text-sm outline-none" aria-label="City" />
-            <button className="m-1 grid h-9 w-14 place-items-center rounded-full bg-primary text-primary-foreground" aria-label="Search">
+            <input
+              defaultValue="Belgrade"
+              className="flex-1 bg-transparent py-2.5 text-sm outline-none"
+              aria-label="City"
+            />
+            <button
+              className="m-1 grid h-9 w-14 place-items-center rounded-full bg-primary text-primary-foreground"
+              aria-label="Search"
+            >
               <Search className="h-4 w-4" />
             </button>
           </div>
           <div className="flex-1" />
-          <Link to="/alerts" className="relative grid h-10 w-10 place-items-center rounded-full hover:bg-muted" aria-label="Alerts">
+          <Link
+            to="/alerts"
+            className="relative grid h-10 w-10 place-items-center rounded-full hover:bg-muted"
+            aria-label="Alerts"
+          >
             <Bell className="h-5 w-5" />
-
           </Link>
-          <Link to="/account" className="rounded-full bg-primary-soft px-3 py-2 text-sm font-semibold text-accent-foreground">{user ? "Account" : "Sign in"}</Link>
+          <Link
+            to="/account"
+            className="rounded-full bg-primary-soft px-3 py-2 text-sm font-semibold text-accent-foreground"
+          >
+            {user ? "Account" : "Sign in"}
+          </Link>
         </header>
-        <main className="flex-1">{demoMode && <p role="status" className="bg-accent px-6 py-3 text-sm">Demo mode — sample apartments, not live rental inventory. Saving demo apartments is disabled.</p>}{children}</main>
+        <main className="flex-1">
+          {demoMode && (
+            <p role="status" className="bg-accent px-6 py-3 text-sm">
+              Demo mode — sample apartments, not live rental inventory. Saving demo apartments is
+              disabled.
+            </p>
+          )}
+          {children}
+        </main>
         <nav className="sticky bottom-0 flex justify-around border-t bg-card py-2 md:hidden">
           {nav.slice(0, 5).map((n) => (
-            <Link key={n.to} to={n.to} aria-label={n.label} className="p-2 text-muted-foreground" activeProps={{ className: "!text-primary" }}>
+            <Link
+              key={n.to}
+              to={n.to}
+              aria-label={n.label}
+              className="p-2 text-muted-foreground"
+              activeProps={{ className: "!text-primary" }}
+            >
               <n.icon className="h-5 w-5" />
             </Link>
           ))}
@@ -71,7 +121,15 @@ export function AppShell({ children }: { children: ReactNode }) {
   );
 }
 
-export function PageHeader({ title, sub, children }: { title: string; sub?: string; children?: ReactNode }) {
+export function PageHeader({
+  title,
+  sub,
+  children,
+}: {
+  title: string;
+  sub?: string;
+  children?: ReactNode;
+}) {
   return (
     <div className="flex flex-wrap items-end justify-between gap-4 px-6 pt-8 pb-6">
       <div>
