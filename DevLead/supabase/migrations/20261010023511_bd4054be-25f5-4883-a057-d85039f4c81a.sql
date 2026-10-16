@@ -1,0 +1,1 @@
+ALTER TABLE software.contacts ADD COLUMN IF NOT EXISTS status text NOT NULL DEFAULT 'Not contacted', ADD COLUMN IF NOT EXISTS last_contacted_at timestamptz;

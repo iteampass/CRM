@@ -1,0 +1,1 @@
+GRANT SELECT ON software.api_keys TO service_role; REVOKE ALL ON software.api_keys FROM anon, authenticated;
