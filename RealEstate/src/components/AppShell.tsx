@@ -12,6 +12,7 @@ import {
   Shield,
   Bookmark,
   Building2,
+  Info,
 } from "lucide-react";
 import { useAuth } from "@/lib/auth";
 import { demoMode } from "@/lib/data";
@@ -23,6 +24,7 @@ const nav = [
   { to: "/alerts", icon: Bell, label: "Alerts" },
   { to: "/insights", icon: LineChart, label: "Price insights" },
   { to: "/account", icon: Settings, label: "Account" },
+  { to: "/about", icon: Info, label: "About" },
 ] as const;
 export function AppShell({ children }: { children: ReactNode }) {
   const { t: ui } = useI18n();
@@ -105,6 +107,11 @@ export function AppShell({ children }: { children: ReactNode }) {
           )}
           {children}
         </main>
+        <footer className="border-t px-6 py-4 text-sm text-muted-foreground">
+          <Link to="/about" className="hover:text-foreground">
+            {ui("About Nestly")}
+          </Link>
+        </footer>
         <nav className="sticky bottom-0 flex justify-around border-t bg-card py-2 md:hidden">
           {nav.slice(0, 5).map((n) => (
             <Link
