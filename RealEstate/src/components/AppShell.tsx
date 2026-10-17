@@ -1,3 +1,4 @@
+import { useSearchLocation } from "@/lib/search-location";
 import { useI18n } from "@/lib/i18n";
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
@@ -18,6 +19,7 @@ import { useAuth } from "@/lib/auth";
 import { demoMode } from "@/lib/data";
 const nav = [
   { to: "/discover", icon: Compass, label: "Discover" },
+  { to: "/imports", icon: Building2, label: "Imported apartments" },
   { to: "/map", icon: Map, label: "Map search" },
   { to: "/saved", icon: Bookmark, label: "Saved searches" },
   { to: "/favorites", icon: Heart, label: "Favorites" },
@@ -29,6 +31,7 @@ const nav = [
 export function AppShell({ children }: { children: ReactNode }) {
   const { t: ui } = useI18n();
   const { user } = useAuth();
+  const { location, setLocation } = useSearchLocation();
   return (
     <div className="flex min-h-screen w-full bg-background">
       <aside className="sticky top-0 hidden h-screen w-20 flex-col items-center gap-2 border-r bg-card py-5 md:flex">
@@ -71,7 +74,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           </div>
           <div className="flex max-w-md flex-1 items-center rounded-full bg-muted pl-5">
             <input
-              defaultValue="Belgrade"
+              value={location}
+              onChange={(event) => setLocation(event.target.value)}
               className="flex-1 bg-transparent py-2.5 text-sm outline-none"
               aria-label={ui("City")}
             />

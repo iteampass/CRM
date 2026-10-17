@@ -83,3 +83,39 @@ Automatic search requires sign-in and uses the existing 15-second user throttle.
 Searches are bounded, run only on demand, preserve partial results on failure, and
 have 10-second per-request timeouts. Results remain in component memory for the visit;
 no database migrations or provider subscriptions are created by this change.
+
+## AI apartment imports
+
+Each web result now has **Extract with AI**. The **Imported apartments** menu contains
+private, persistent records with location, street, address, floor, price (amount,
+currency, period and original text), building/house type, parking, agency/owner,
+advertiser name, announcement date, descriptions, source photo URLs, extraction notes,
+and raw data. Unknown fields stay null. Announcement dates retain source wording and
+are separate from import timestamps. Search results are not treated as verified facts.
+
+Configure `OPENAI_API_KEY` on the server. Optional `RENTAL_EXTRACTION_MODEL` overrides
+`gpt-4o-mini` with another Responses API model supporting strict structured outputs.
+Never prefix secrets with `VITE_`. The public source URL is read through
+[Jina Reader](https://jina.ai/reader/); `JINA_API_KEY` is optional for increased reader
+limits. Retrieved text is sent to [OpenAI structured extraction](https://developers.openai.com/api/docs/guides/structured-outputs)
+with `store: false`. These providers' account, billing and data-processing terms apply.
+
+No arbitrary source hosts are fetched from the application server: it only calls the
+fixed reader and OpenAI endpoints. No login cookies are forwarded. Reader requests
+respect robots rules. Source failures and AI refusals are saved as failed records with
+available raw metadata; retry from the detail view. Missing AI configuration is shown
+before external calls. Category/group pages are saved as needing review with individual
+listing links when found; extract those links separately. This avoids mixing multiple
+apartments into a single record. Repeated successful imports reuse the user's record.
+
+Raw data contains the search snippet, full retrieved reader response (Markdown, not
+original HTML), retrieval time, model response and truncation flag. Provider responses
+are capped at 1 MB, AI input at 60,000 characters, and request timeouts at 30/60 seconds.
+Photos are source URLs stored in the database and shown in a gallery; image binaries
+are not copied to Storage, so source removal can make a photo unavailable. The table
+has pagination (50 records per page), current-page filters and on-demand raw-data loading.
+
+The shared migration `20261017121212_imported_rentals.sql` creates
+`realestate.imported_rentals` with per-user RLS, no anonymous access and a unique user/source
+key. The server uses the user's verified session, not a service role. Run
+`supabase/tests/imported_rentals.sql` as postgres for rollback-only ownership tests.

@@ -1,3 +1,4 @@
+import { useSearchLocation } from "@/lib/search-location";
 import { useI18n } from "@/lib/i18n";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/discover")({
 });
 function Discover() {
   const { t: ui } = useI18n();
+  const { preferredCity } = useSearchLocation();
   const query = useListings();
   const listings = query.isError ? [] : (query.data ?? []);
   const [active, setActive] = useState("1");
@@ -43,7 +45,9 @@ function Discover() {
             </button>
           </div>
           <div className="mt-6 flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight">{ui("Belgrade, Serbia")}</h1>
+            <h1 className="text-2xl font-bold tracking-tight">
+              {preferredCity || ui("Discover apartments")}
+            </h1>
             <span className="text-sm text-muted-foreground">
               {listings.length}
               {ui(" results")}

@@ -1,4 +1,6 @@
+import { ExtractRentalButton } from "./ExtractRentalButton";
 import { useState } from "react";
+import { useSearchLocation } from "@/lib/search-location";
 import { Link } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth";
@@ -19,7 +21,7 @@ export function WebRentalSearch() {
 }
 function SearchForm({ signedIn }: { signedIn: boolean }) {
   const { t } = useI18n();
-  const [location, setLocation] = useState("Belgrade");
+  const { location, setLocation } = useSearchLocation();
   const [keywords, setKeywords] = useState("apartments for rent\nizdavanje stanova");
   const [submitted, setSubmitted] = useState<WebSearchInput | null>(null);
   const [results, setResults] = useState<RentalWebResult[]>([]);
@@ -219,6 +221,11 @@ function SearchForm({ signedIn }: { signedIn: boolean }) {
             <p className="mt-2 text-xs text-muted-foreground">
               {t("Matched keywords")}: {result.keywords.join(" · ")}
             </p>
+            {signedIn && (
+              <ExtractRentalButton
+                item={{ url: result.url, title: result.title, description: result.description }}
+              />
+            )}
           </article>
         ))}
         {search.data?.more && submitted && (

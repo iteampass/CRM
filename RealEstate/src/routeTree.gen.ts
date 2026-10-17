@@ -16,6 +16,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AlertsRouteImport } from './routes/alerts'
 import { Route as DiscoverRouteImport } from './routes/discover'
 import { Route as FavoritesRouteImport } from './routes/favorites'
+import { Route as ImportsRouteImport } from './routes/imports'
 import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as SavedRouteImport } from './routes/saved'
@@ -55,6 +56,11 @@ const FavoritesRoute = FavoritesRouteImport.update({
   path: '/favorites',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ImportsRoute = ImportsRouteImport.update({
+  id: '/imports',
+  path: '/imports',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const InsightsRoute = InsightsRouteImport.update({
   id: '/insights',
   path: '/insights',
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/alerts': typeof AlertsRoute
   '/discover': typeof DiscoverRoute
   '/favorites': typeof FavoritesRoute
+  '/imports': typeof ImportsRoute
   '/insights': typeof InsightsRoute
   '/map': typeof MapRoute
   '/saved': typeof SavedRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/alerts': typeof AlertsRoute
   '/discover': typeof DiscoverRoute
   '/favorites': typeof FavoritesRoute
+  '/imports': typeof ImportsRoute
   '/insights': typeof InsightsRoute
   '/map': typeof MapRoute
   '/saved': typeof SavedRoute
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/alerts': typeof AlertsRoute
   '/discover': typeof DiscoverRoute
   '/favorites': typeof FavoritesRoute
+  '/imports': typeof ImportsRoute
   '/insights': typeof InsightsRoute
   '/map': typeof MapRoute
   '/saved': typeof SavedRoute
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/alerts'
     | '/discover'
     | '/favorites'
+    | '/imports'
     | '/insights'
     | '/map'
     | '/saved'
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/alerts'
     | '/discover'
     | '/favorites'
+    | '/imports'
     | '/insights'
     | '/map'
     | '/saved'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/alerts'
     | '/discover'
     | '/favorites'
+    | '/imports'
     | '/insights'
     | '/map'
     | '/saved'
@@ -155,6 +167,7 @@ export interface RootRouteChildren {
   AlertsRoute: typeof AlertsRoute
   DiscoverRoute: typeof DiscoverRoute
   FavoritesRoute: typeof FavoritesRoute
+  ImportsRoute: typeof ImportsRoute
   InsightsRoute: typeof InsightsRoute
   MapRoute: typeof MapRoute
   SavedRoute: typeof SavedRoute
@@ -211,6 +224,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FavoritesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/imports': {
+      id: '/imports'
+      path: '/imports'
+      fullPath: '/imports'
+      preLoaderRoute: typeof ImportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/insights': {
       id: '/insights'
       path: '/insights'
@@ -243,6 +263,7 @@ const rootRouteChildren: RootRouteChildren = {
   AlertsRoute: AlertsRoute,
   DiscoverRoute: DiscoverRoute,
   FavoritesRoute: FavoritesRoute,
+  ImportsRoute: ImportsRoute,
   InsightsRoute: InsightsRoute,
   MapRoute: MapRoute,
   SavedRoute: SavedRoute,

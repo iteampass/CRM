@@ -6,6 +6,10 @@ const mocks = vi.hoisted(() => ({
   user: { id: "user" } as { id: string } | null,
   search: vi.fn(),
   session: vi.fn(),
+  profile: undefined as { preferred_city: string } | undefined,
+}));
+vi.mock("@/lib/personal-data", () => ({
+  useProfile: () => ({ data: mocks.profile, isPending: !mocks.profile }),
 }));
 vi.mock("@/lib/auth", () => ({ useAuth: () => ({ user: mocks.user }) }));
 vi.mock("@tanstack/react-router", () => ({
@@ -16,7 +20,7 @@ vi.mock("@/integrations/supabase/client", () => ({
   supabase: { auth: { getSession: mocks.session } },
 }));
 function show() {
-  render(
+  return render(
     <QueryClientProvider client={new QueryClient()}>
       <WebRentalSearch />
     </QueryClientProvider>,
@@ -25,6 +29,7 @@ function show() {
 beforeEach(() => {
   vi.clearAllMocks();
   mocks.user = { id: "user" };
+  mocks.profile = { preferred_city: "Valjevo" };
   mocks.session.mockResolvedValue({ data: { session: { access_token: "token" } } });
 });
 it("provides external searches to guests without calling the API", () => {
@@ -64,4 +69,37 @@ it("searches custom locations and merges subsequent pages", async () => {
   await waitFor(() => expect(screen.getByText("Another flat")).toBeInTheDocument());
   expect(screen.getAllByText("Rental flat")).toHaveLength(1);
   expect(mocks.search.mock.calls[1]![0].data.page).toBe(1);
+});
+
+it("uses the preferred profile town for the query and external search links", async () => {
+  mocks.search.mockResolvedValue({ results: [], warnings: [], more: false, configured: true });
+  show();
+  expect(screen.getByLabelText("City, town or region")).toHaveValue("Valjevo");
+  expect(screen.getAllByText("Google")[0]).toHaveAttribute(
+    "href",
+    expect.stringContaining("Valjevo"),
+  );
+  fireEvent.click(screen.getByRole("button", { name: "Find rentals" }));
+  await waitFor(() => expect(mocks.search).toHaveBeenCalled());
+  expect(mocks.search.mock.calls[0]![0].data.location).toBe("Valjevo");
+});
+it("adopts a profile loaded later without overwriting a manually entered town", () => {
+  mocks.profile = undefined;
+  const client = new QueryClient();
+  const view = () => (
+    <QueryClientProvider client={client}>
+      <WebRentalSearch />
+    </QueryClientProvider>
+  );
+  const { rerender } = render(view());
+  expect(screen.getByLabelText("City, town or region")).toHaveValue("");
+  mocks.profile = { preferred_city: "Valjevo" };
+  rerender(view());
+  expect(screen.getByLabelText("City, town or region")).toHaveValue("Valjevo");
+  fireEvent.change(screen.getByLabelText("City, town or region"), {
+    target: { value: "Novi Sad" },
+  });
+  mocks.profile = { preferred_city: "Nis" };
+  rerender(view());
+  expect(screen.getByLabelText("City, town or region")).toHaveValue("Novi Sad");
 });
