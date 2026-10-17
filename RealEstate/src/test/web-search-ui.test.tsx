@@ -5,10 +5,12 @@ import { WebRentalSearch } from "@/components/WebRentalSearch";
 const mocks = vi.hoisted(() => ({
   user: { id: "user" } as { id: string } | null,
   search: vi.fn(),
+  save: vi.fn(),
   session: vi.fn(),
   profile: undefined as { preferred_city: string } | undefined,
 }));
 vi.mock("@/lib/personal-data", () => ({
+  useSavedSearches: () => ({ save: { mutate: mocks.save, isPending: false, isError: false } }),
   useProfile: () => ({ data: mocks.profile, isPending: !mocks.profile }),
 }));
 vi.mock("@/lib/auth", () => ({ useAuth: () => ({ user: mocks.user }) }));
@@ -102,4 +104,55 @@ it("adopts a profile loaded later without overwriting a manually entered town", 
   mocks.profile = { preferred_city: "Nis" };
   rerender(view());
   expect(screen.getByLabelText("City, town or region")).toHaveValue("Novi Sad");
+});
+
+it("collapses and expands without losing search inputs", () => {
+  show();
+  fireEvent.change(screen.getByLabelText("City, town or region"), {
+    target: { value: "Novi Sad" },
+  });
+  fireEvent.click(screen.getByRole("button", { name: "Collapse search" }));
+  expect(screen.getByLabelText("City, town or region")).not.toBeVisible();
+  fireEvent.click(screen.getByRole("button", { name: "Expand search" }));
+  expect(screen.getByLabelText("City, town or region")).toHaveValue("Novi Sad");
+});
+it("saves the location and keyword lines without running a web search", () => {
+  show();
+  fireEvent.click(screen.getByRole("button", { name: "Save search" }));
+  expect(mocks.save).toHaveBeenCalledWith(
+    expect.objectContaining({
+      values: expect.objectContaining({
+        city: "Valjevo",
+        keywords: ["apartments for rent", "izdavanje stanova"],
+      }),
+    }),
+    expect.objectContaining({ onSuccess: expect.any(Function) }),
+  );
+  expect(mocks.search).not.toHaveBeenCalled();
+});
+it("restores saved search criteria instead of the profile default", () => {
+  render(
+    <QueryClientProvider client={new QueryClient()}>
+      <WebRentalSearch
+        initialSearch={{
+          location: "Novi Sad",
+          keywords: ["pet friendly rent", "izdavanje stanova"],
+        }}
+      />
+    </QueryClientProvider>,
+  );
+  expect(screen.getByLabelText("City, town or region")).toHaveValue("Novi Sad");
+  expect(screen.getByLabelText("Keywords (one search per line, up to 5)")).toHaveValue(
+    "pet friendly rent\nizdavanje stanova",
+  );
+  expect(mocks.search).not.toHaveBeenCalled();
+});
+it("offers Saved searches after a successful save and prevents duplicate clicks", () => {
+  mocks.save.mockImplementation((_input, options) => options.onSuccess());
+  show();
+  fireEvent.click(screen.getByRole("button", { name: "Save search" }));
+  expect(screen.getByText("Browse saved searches")).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Search saved" })).toBeDisabled();
+  fireEvent.change(screen.getByLabelText("City, town or region"), { target: { value: "Nis" } });
+  expect(screen.getByRole("button", { name: "Save search" })).toBeEnabled();
 });

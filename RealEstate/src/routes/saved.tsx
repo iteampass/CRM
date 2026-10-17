@@ -1,5 +1,6 @@
 import { useI18n } from "@/lib/i18n";
-import { createFileRoute } from "@tanstack/react-router";
+import { useSearchLocation } from "@/lib/search-location";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { AppShell, PageHeader } from "@/components/AppShell";
 import { QueryStatus } from "@/components/QueryStatus";
@@ -14,6 +15,7 @@ const field = "mt-1 w-full rounded-xl border bg-background px-3 py-2 text-sm";
 function SearchForm({ initial, onDone }: { initial: SavedSearch | null; onDone: () => void }) {
   const { t: ui } = useI18n();
   const { save } = useSavedSearches();
+  const { preferredCity } = useSearchLocation();
   return (
     <form
       className="mb-6 grid gap-4 rounded-2xl border bg-card p-5 sm:grid-cols-2"
@@ -28,6 +30,10 @@ function SearchForm({ initial, onDone }: { initial: SavedSearch | null; onDone: 
             values: {
               name: value("name"),
               city: value("city") || null,
+              keywords: value("keywords")
+                .split("\n")
+                .map((k) => k.trim())
+                .filter(Boolean),
               areas: value("areas")
                 .split(",")
                 .map((x) => x.trim())
@@ -58,7 +64,17 @@ function SearchForm({ initial, onDone }: { initial: SavedSearch | null; onDone: 
           className={field}
           name="city"
           maxLength={120}
-          defaultValue={initial?.city ?? "Belgrade"}
+          defaultValue={initial?.city ?? preferredCity}
+        />
+      </label>
+      <label className="sm:col-span-2">
+        {ui("Keywords (one search per line, up to 5)")}
+        <textarea
+          className={field}
+          name="keywords"
+          rows={3}
+          maxLength={604}
+          defaultValue={initial?.keywords?.join("\n") ?? ""}
         />
       </label>
       <label>
@@ -181,6 +197,20 @@ function SearchList() {
                   {ui("Move-in: ")}
                   {s.move_in_date}
                 </p>
+              )}
+              {!!s.keywords?.length && (
+                <div className="mt-3">
+                  <p className="whitespace-pre-line text-sm text-muted-foreground">
+                    {s.keywords.join("\n")}
+                  </p>
+                  <Link
+                    to="/discover"
+                    search={{ web: { location: s.city || "", keywords: s.keywords } }}
+                    className="mt-2 inline-block rounded border px-3 py-2 text-sm text-primary"
+                  >
+                    {ui("Open web search")}
+                  </Link>
+                </div>
               )}
               <div className="mt-4 flex gap-4 text-sm">
                 <button className="text-primary" onClick={() => setEditing(s)}>

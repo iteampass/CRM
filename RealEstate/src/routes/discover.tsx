@@ -6,7 +6,7 @@ import { ChevronDown, SlidersHorizontal, LayoutGrid, List } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { WebRentalSearch } from "@/components/WebRentalSearch";
 import { ListingCard } from "@/components/ListingCard";
-import { MapView } from "@/components/MapView";
+import { webSearchInput } from "@/lib/web-search";
 import { QueryStatus } from "@/components/QueryStatus";
 import { useListings } from "@/lib/data";
 import { pageHead } from "@/lib/head";
@@ -15,17 +15,24 @@ export const Route = createFileRoute("/discover")({
     "Discover apartments",
     "Browse rental listings from every source, ranked by match.",
   ),
+  validateSearch: (
+    search: Record<string, unknown>,
+  ): { web?: { location: string; keywords: string[] } } => {
+    const parsed = webSearchInput.pick({ location: true, keywords: true }).safeParse(search["web"]);
+    return parsed.success ? { web: parsed.data } : {};
+  },
   component: Discover,
 });
 function Discover() {
   const { t: ui } = useI18n();
   const { preferredCity } = useSearchLocation();
+  const { web } = Route.useSearch();
   const query = useListings();
   const listings = query.isError ? [] : (query.data ?? []);
   const [active, setActive] = useState("1");
   return (
     <AppShell>
-      <div className="grid lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <div className="w-full">
         <div className="px-6 py-6">
           <div className="flex flex-wrap items-center gap-2">
             {["All types", "Long term", "€500 – €2,500", "Furnished"].map((f) => (
@@ -70,7 +77,7 @@ function Discover() {
               <List className="h-4 w-4" />
             </button>
           </div>
-          <WebRentalSearch />
+          <WebRentalSearch initialSearch={web} />
           <div className="mt-5 space-y-4">
             <QueryStatus
               pending={query.isPending}
@@ -90,9 +97,6 @@ function Discover() {
               />
             ))}
           </div>
-        </div>
-        <div className="sticky top-20 hidden h-[calc(100vh-5rem)] lg:block">
-          <MapView items={listings} activeId={active} onSelect={setActive} />
         </div>
       </div>
     </AppShell>

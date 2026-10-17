@@ -879,5 +879,11 @@
   "Imported apartments could not be loaded. Please try again.": "Увезени станови нису учитани. Покушајте поново.",
   "Could not save the extracted apartment. Please try again.": "Издвојени стан није сачуван. Покушајте поново.",
   "Could not confirm the saved apartment. Please try again.": "Није могуће потврдити чување стана. Покушајте поново.",
-  "Raw data could not be loaded.": "Сирови подаци нису учитани."
+  "Raw data could not be loaded.": "Сирови подаци нису учитани.",
+  "Collapse search": "Скупи претрагу",
+  "Expand search": "Прошири претрагу",
+  "Search saved": "Претрага је сачувана",
+  "Browse saved searches": "Прегледај сачуване претраге",
+  "Open web search": "Отвори веб претрагу",
+  "Web searches need a valid location and keyword lines.": "Веб претрага захтева исправну локацију и кључне речи."
 }

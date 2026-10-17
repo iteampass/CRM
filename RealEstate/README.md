@@ -119,3 +119,17 @@ The shared migration `20261017121212_imported_rentals.sql` creates
 `realestate.imported_rentals` with per-user RLS, no anonymous access and a unique user/source
 key. The server uses the user's verified session, not a service role. Run
 `supabase/tests/imported_rentals.sql` as postgres for rollback-only ownership tests.
+
+## Saving web searches
+
+Discover uses a full-width layout without the map panel. The web-search section can
+be collapsed without discarding its form or results. **Save search** stores the current
+location and up to five keyword lines in the signed-in user's `realestate.saved_searches`
+record. Search results themselves are not saved by this action; use AI import for those.
+**Saved searches** shows the keyword lines, supports editing/deleting them, and has an
+**Open web search** link that restores the saved criteria on Discover. Searches run only
+when the user clicks Find rentals, not automatically when opening a saved search.
+
+Migration `20261017131726_saved_web_search_keywords.sql` adds `keywords` with an empty
+array default, preserving older saved searches and their existing per-user RLS.
+`supabase/tests/saved_web_searches.sql` verifies save/read/edit, defaults and isolation.

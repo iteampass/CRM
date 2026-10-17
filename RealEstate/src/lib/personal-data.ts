@@ -2,12 +2,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "./auth";
 import { estate, toListing, type ListingRow } from "./data";
 import { z } from "zod";
+import { webSearchInput } from "./web-search";
 
 export type SavedSearch = {
   id: string;
   name: string;
   city: string | null;
   areas: string[];
+  keywords: string[];
   min_price: number | null;
   max_price: number | null;
   property_type: string | null;
@@ -19,6 +21,7 @@ export const searchInput = z
   .object({
     name: z.string().trim().min(1).max(120),
     city: z.string().trim().max(120).nullable(),
+    keywords: z.array(z.string().trim().min(2).max(120)).max(5).default([]),
     areas: z.array(z.string().trim().min(1).max(120)).max(30),
     min_price: z.number().min(0).max(99999999).nullable(),
     max_price: z.number().min(0).max(99999999).nullable(),
@@ -28,6 +31,12 @@ export const searchInput = z
       .regex(/^\d{4}-\d{2}-\d{2}$/)
       .nullable(),
   })
+  .refine(
+    (d) =>
+      !d.keywords.length ||
+      webSearchInput.safeParse({ location: d.city, keywords: d.keywords, page: 0 }).success,
+    { message: "Web searches need a valid location and keyword lines." },
+  )
   .refine((d) => d.min_price === null || d.max_price === null || d.min_price <= d.max_price, {
     message: "Minimum price cannot exceed maximum price",
   });
