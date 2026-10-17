@@ -1,16 +1,21 @@
+import { useI18n } from "@/lib/i18n";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import type { User } from "@supabase/supabase-js";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
-
-const AuthContext = createContext<{ user: User | null; loading: boolean }>({
+const AuthContext = createContext<{
+  user: User | null;
+  loading: boolean;
+}>({
   user: null,
   loading: true,
 });
-
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [auth, setAuth] = useState<{ user: User | null; loading: boolean }>({
+  const [auth, setAuth] = useState<{
+    user: User | null;
+    loading: boolean;
+  }>({
     user: null,
     loading: true,
   });
@@ -30,23 +35,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [auth.user?.id, cache]);
   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
 }
-
 export const useAuth = () => useContext(AuthContext);
-
 export function RequireUser({ children }: { children: ReactNode }) {
+  const { t: ui } = useI18n();
   const { user, loading } = useAuth();
   if (loading)
     return (
       <p className="p-6" role="status">
-        Checking your session…
+        {ui("Checking your session\u2026")}
       </p>
     );
   if (!user)
     return (
       <div className="space-y-3 p-6">
-        <p>Sign in to save apartments, searches, and preferences.</p>
+        <p>{ui("Sign in to save apartments, searches, and preferences.")}</p>
         <Link to="/account" className="font-medium text-primary">
-          Sign in or create an account →
+          {ui("Sign in or create an account \u2192")}
         </Link>
       </div>
     );

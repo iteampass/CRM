@@ -1,3 +1,4 @@
+import { useI18n } from "@/lib/i18n";
 export function QueryStatus({
   pending,
   error,
@@ -11,18 +12,22 @@ export function QueryStatus({
   emptyText: string;
   retry: () => unknown;
 }) {
+  const { t: ui } = useI18n();
   if (pending)
     return (
       <p role="status" className="py-4 text-muted-foreground">
-        Loading…
+        {ui("Loading\u2026")}
       </p>
     );
   if (error)
     return (
       <div role="alert" className="space-y-2 py-4">
-        <p>Couldn’t load data: {error.message}</p>
+        <p>
+          {ui("Couldn\u2019t load data: ")}
+          {error.message}
+        </p>
         <button className="text-primary underline" onClick={() => retry()}>
-          Try again
+          {ui("Try again")}
         </button>
       </div>
     );

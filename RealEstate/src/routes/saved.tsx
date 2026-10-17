@@ -1,3 +1,4 @@
+import { useI18n } from "@/lib/i18n";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { AppShell, PageHeader } from "@/components/AppShell";
@@ -11,6 +12,7 @@ export const Route = createFileRoute("/saved")({
 });
 const field = "mt-1 w-full rounded-xl border bg-background px-3 py-2 text-sm";
 function SearchForm({ initial, onDone }: { initial: SavedSearch | null; onDone: () => void }) {
+  const { t: ui } = useI18n();
   const { save } = useSavedSearches();
   return (
     <form
@@ -41,7 +43,7 @@ function SearchForm({ initial, onDone }: { initial: SavedSearch | null; onDone: 
       }}
     >
       <label>
-        Search name
+        {ui("Search name")}
         <input
           className={field}
           name="name"
@@ -51,7 +53,7 @@ function SearchForm({ initial, onDone }: { initial: SavedSearch | null; onDone: 
         />
       </label>
       <label>
-        City
+        {ui("City")}
         <input
           className={field}
           name="city"
@@ -60,20 +62,20 @@ function SearchForm({ initial, onDone }: { initial: SavedSearch | null; onDone: 
         />
       </label>
       <label>
-        Areas (separate with commas)
+        {ui("Areas (separate with commas)")}
         <input className={field} name="areas" defaultValue={initial?.areas.join(", ") ?? ""} />
       </label>
       <label>
-        Property type
+        {ui("Property type")}
         <select className={field} name="type" defaultValue={initial?.property_type ?? ""}>
-          <option value="">Any</option>
-          <option>Apartment</option>
-          <option>Studio</option>
-          <option>House</option>
+          <option value="">{ui("Any")}</option>
+          <option value="Apartment">{ui("Apartment")}</option>
+          <option value="Studio">{ui("Studio")}</option>
+          <option value="House">{ui("House")}</option>
         </select>
       </label>
       <label>
-        Minimum rent (€)
+        {ui("Minimum rent (\u20AC)")}
         <input
           className={field}
           type="number"
@@ -85,7 +87,7 @@ function SearchForm({ initial, onDone }: { initial: SavedSearch | null; onDone: 
         />
       </label>
       <label>
-        Maximum rent (€)
+        {ui("Maximum rent (\u20AC)")}
         <input
           className={field}
           type="number"
@@ -97,7 +99,7 @@ function SearchForm({ initial, onDone }: { initial: SavedSearch | null; onDone: 
         />
       </label>
       <label>
-        Move-in date
+        {ui("Move-in date")}
         <input
           className={field}
           type="date"
@@ -106,7 +108,9 @@ function SearchForm({ initial, onDone }: { initial: SavedSearch | null; onDone: 
         />
       </label>
       <p className="self-center text-sm text-muted-foreground">
-        Automatic matching and alerts are not available yet. Your search criteria will be saved.
+        {ui(
+          "Automatic matching and alerts are not available yet. Your search criteria will be saved.",
+        )}
       </p>
       {save.isError && (
         <p role="alert" className="text-destructive sm:col-span-2">
@@ -118,16 +122,17 @@ function SearchForm({ initial, onDone }: { initial: SavedSearch | null; onDone: 
           disabled={save.isPending}
           className="rounded-full bg-primary px-5 py-2 text-primary-foreground disabled:opacity-50"
         >
-          {save.isPending ? "Saving…" : "Save search"}
+          {save.isPending ? ui("Saving…") : ui("Save search")}
         </button>
         <button type="button" disabled={save.isPending} onClick={onDone}>
-          Cancel
+          {ui("Cancel")}
         </button>
       </div>
     </form>
   );
 }
 function SearchList() {
+  const { t: ui } = useI18n();
   const query = useSavedSearches();
   const [editing, setEditing] = useState<SavedSearch | null | undefined>(undefined);
   return (
@@ -137,7 +142,7 @@ function SearchList() {
           className="mb-5 rounded-full bg-primary px-5 py-2 text-primary-foreground"
           onClick={() => setEditing(null)}
         >
-          New search
+          {ui("New search")}
         </button>
       ) : (
         <SearchForm
@@ -150,7 +155,7 @@ function SearchList() {
         pending={query.isPending}
         error={query.error}
         empty={!query.data?.length}
-        emptyText="No saved searches yet."
+        emptyText={ui("No saved searches yet.")}
         retry={query.refetch}
       />
       {query.remove.isError && (
@@ -164,27 +169,32 @@ function SearchList() {
             <div key={s.id} className="rounded-2xl border bg-card p-5">
               <h2 className="font-semibold">{s.name}</h2>
               <p className="mt-2 text-sm">
-                {s.city || "Any city"}
+                {s.city || ui("Any city")}
                 {s.areas.length ? ` · ${s.areas.join(", ")}` : ""}
               </p>
               <p className="mt-2 text-sm">
-                €{s.min_price ?? 0} – {s.max_price === null ? "No maximum" : `€${s.max_price}`} ·{" "}
-                {s.property_type || "Any type"}
+                €{s.min_price ?? 0} – {s.max_price === null ? ui("No maximum") : `€${s.max_price}`}{" "}
+                · {ui(s.property_type || "Any type")}
               </p>
-              {s.move_in_date && <p className="mt-2 text-sm">Move-in: {s.move_in_date}</p>}
+              {s.move_in_date && (
+                <p className="mt-2 text-sm">
+                  {ui("Move-in: ")}
+                  {s.move_in_date}
+                </p>
+              )}
               <div className="mt-4 flex gap-4 text-sm">
                 <button className="text-primary" onClick={() => setEditing(s)}>
-                  Edit
+                  {ui("Edit")}
                 </button>
                 <button
                   disabled={query.remove.isPending}
                   className="text-destructive"
                   onClick={() => {
-                    if (window.confirm(`Delete saved search “${s.name}”?`))
+                    if (window.confirm(`${ui("Delete saved search")}: “${s.name}”?`))
                       query.remove.mutate(s.id);
                   }}
                 >
-                  Delete
+                  {ui("Delete")}
                 </button>
               </div>
             </div>
@@ -194,11 +204,12 @@ function SearchList() {
   );
 }
 function Saved() {
+  const { t: ui } = useI18n();
   return (
     <AppShell>
       <PageHeader
-        title="Saved searches"
-        sub="Save and edit your rental criteria. Automatic alerts are coming later."
+        title={ui("Saved searches")}
+        sub={ui("Save and edit your rental criteria. Automatic alerts are coming later.")}
       />
       <RequireUser>
         <SearchList />

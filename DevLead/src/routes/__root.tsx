@@ -1,3 +1,4 @@
+import { LanguageProvider, LanguageSwitcher, useI18n } from "@/lib/i18n";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -10,37 +11,36 @@ import {
   type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
-
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AppShell } from "@/components/crm/AppShell";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { resetCrm } from "@/lib/mock-data";
-
 function NotFoundComponent() {
+  const { t: ui } = useI18n();
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
+        <h2 className="mt-4 text-xl font-semibold text-foreground">{ui("Page not found")}</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+          {ui("The page you're looking for doesn't exist or has been moved.")}
         </p>
         <div className="mt-6">
           <Link
             to="/"
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           >
-            Go home
+            {ui("Go home")}
           </Link>
         </div>
       </div>
     </div>
   );
 }
-
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
+  const { t: ui } = useI18n();
   console.error(error);
   const router = useRouter();
   useEffect(() => {
@@ -50,10 +50,10 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
         <h1 className="text-xl font-semibold tracking-tight text-foreground">
-          This page didn't load
+          {ui("This page didn't load")}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Something went wrong on our end. You can try refreshing or head back home.
+          {ui("Something went wrong on our end. You can try refreshing or head back home.")}
         </p>
         <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
@@ -63,21 +63,22 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
             }}
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           >
-            Try again
+            {ui("Try again")}
           </button>
           <a
             href="/"
             className="inline-flex items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-accent"
           >
-            Go home
+            {ui("Go home")}
           </a>
         </div>
       </div>
     </div>
   );
 }
-
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+}>()({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
@@ -110,7 +111,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
-
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
@@ -118,13 +118,15 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        {children}
+        <LanguageProvider>
+          {children}
+          <LanguageSwitcher />
+        </LanguageProvider>
         <Scripts />
       </body>
     </html>
   );
 }
-
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();

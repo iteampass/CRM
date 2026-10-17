@@ -1,3 +1,4 @@
+import { useI18n } from "@/lib/i18n";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell, PageHeader } from "@/components/AppShell";
 import { QueryStatus } from "@/components/QueryStatus";
@@ -9,17 +10,18 @@ export const Route = createFileRoute("/alerts")({
   component: Alerts,
 });
 function AlertList() {
+  const { t: ui, locale: uiLocale } = useI18n();
   const query = useAlerts();
   return (
     <div className="px-6 pb-10">
       <p className="mb-4 text-sm text-muted-foreground">
-        Automatic matching, email notifications, and push delivery are not available yet.
+        {ui("Automatic matching, email notifications, and push delivery are not available yet.")}
       </p>
       <QueryStatus
         pending={query.isPending}
         error={query.error}
         empty={!query.data?.length}
-        emptyText="You have no alerts."
+        emptyText={ui("You have no alerts.")}
         retry={query.refetch}
       />
       {query.markRead.isError && <p role="alert">{query.markRead.error.message}</p>}
@@ -30,18 +32,18 @@ function AlertList() {
               <div>
                 <p className="font-medium">{a.listings?.title ?? "Listing unavailable"}</p>
                 <p className="text-xs text-muted-foreground">
-                  {new Date(a.created_at).toLocaleDateString()}
+                  {new Date(a.created_at).toLocaleDateString(uiLocale)}
                 </p>
               </div>
               {a.is_read ? (
-                <span className="text-sm text-muted-foreground">Read</span>
+                <span className="text-sm text-muted-foreground">{ui("Read")}</span>
               ) : (
                 <button
                   disabled={query.markRead.isPending}
                   className="text-sm text-primary"
                   onClick={() => query.markRead.mutate(a.id)}
                 >
-                  Mark as read
+                  {ui("Mark as read")}
                 </button>
               )}
             </div>
@@ -51,9 +53,10 @@ function AlertList() {
   );
 }
 function Alerts() {
+  const { t: ui, locale: uiLocale } = useI18n();
   return (
     <AppShell>
-      <PageHeader title="Alerts" sub="Your rental notifications" />
+      <PageHeader title={ui("Alerts")} sub={ui("Your rental notifications")} />
       <RequireUser>
         <AlertList />
       </RequireUser>

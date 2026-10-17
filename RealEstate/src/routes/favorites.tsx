@@ -1,3 +1,4 @@
+import { useI18n } from "@/lib/i18n";
 import { createFileRoute } from "@tanstack/react-router";
 import { AppShell, PageHeader } from "@/components/AppShell";
 import { ListingCard } from "@/components/ListingCard";
@@ -10,6 +11,7 @@ export const Route = createFileRoute("/favorites")({
   component: Favorites,
 });
 function FavoriteList() {
+  const { t: ui } = useI18n();
   const query = useFavorites();
   return (
     <div className="px-6 pb-10">
@@ -17,7 +19,9 @@ function FavoriteList() {
         pending={query.isPending}
         error={query.error}
         empty={!query.data?.length}
-        emptyText="No saved apartments yet. Bookmark an apartment from Discover to add it here."
+        emptyText={ui(
+          "No saved apartments yet. Bookmark an apartment from Discover to add it here.",
+        )}
         retry={query.refetch}
       />
       <div className="grid gap-4 xl:grid-cols-2">
@@ -27,9 +31,10 @@ function FavoriteList() {
   );
 }
 function Favorites() {
+  const { t: ui } = useI18n();
   return (
     <AppShell>
-      <PageHeader title="Favorites" sub="Your saved apartments" />
+      <PageHeader title={ui("Favorites")} sub={ui("Your saved apartments")} />
       <RequireUser>
         <FavoriteList />
       </RequireUser>

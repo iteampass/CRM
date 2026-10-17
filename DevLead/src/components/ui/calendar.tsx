@@ -1,12 +1,11 @@
 "use client";
-
+import { sr, enGB } from "date-fns/locale";
+import { useI18n } from "@/lib/i18n";
 import * as React from "react";
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import { DayButton, DayPicker, getDefaultClassNames } from "react-day-picker";
-
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
-
 function Calendar({
   className,
   classNames,
@@ -19,10 +18,11 @@ function Calendar({
 }: React.ComponentProps<typeof DayPicker> & {
   buttonVariant?: React.ComponentProps<typeof Button>["variant"];
 }) {
+  const { t: ui, locale: uiLocale } = useI18n();
   const defaultClassNames = getDefaultClassNames();
-
   return (
     <DayPicker
+      locale={uiLocale.startsWith("sr") ? sr : enGB}
       showOutsideDays={showOutsideDays}
       className={cn(
         "bg-background group/calendar p-3 [--cell-size:2rem] [[data-slot=card-content]_&]:bg-transparent [[data-slot=popover-content]_&]:bg-transparent",
@@ -32,7 +32,7 @@ function Calendar({
       )}
       captionLayout={captionLayout}
       formatters={{
-        formatMonthDropdown: (date) => date.toLocaleString("default", { month: "short" }),
+        formatMonthDropdown: (date) => date.toLocaleString(uiLocale, { month: "short" }),
         ...formatters,
       }}
       classNames={{
@@ -112,11 +112,9 @@ function Calendar({
           if (orientation === "left") {
             return <ChevronLeftIcon className={cn("size-4", className)} {...props} />;
           }
-
           if (orientation === "right") {
             return <ChevronRightIcon className={cn("size-4", className)} {...props} />;
           }
-
           return <ChevronDownIcon className={cn("size-4", className)} {...props} />;
         },
         DayButton: CalendarDayButton,
@@ -135,26 +133,24 @@ function Calendar({
     />
   );
 }
-
 function CalendarDayButton({
   className,
   day,
   modifiers,
   ...props
 }: React.ComponentProps<typeof DayButton>) {
+  const { t: ui, locale: uiLocale } = useI18n();
   const defaultClassNames = getDefaultClassNames();
-
   const ref = React.useRef<HTMLButtonElement>(null);
   React.useEffect(() => {
     if (modifiers["focused"]) ref.current?.focus();
   }, [modifiers]);
-
   return (
     <Button
       ref={ref}
       variant="ghost"
       size="icon"
-      data-day={day.date.toLocaleDateString()}
+      data-day={day.date.toLocaleDateString(uiLocale)}
       data-selected-single={
         modifiers["selected"] &&
         !modifiers["range_start"] &&
@@ -173,5 +169,4 @@ function CalendarDayButton({
     />
   );
 }
-
 export { Calendar, CalendarDayButton };

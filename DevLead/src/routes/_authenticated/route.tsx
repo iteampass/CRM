@@ -1,7 +1,7 @@
+import { useI18n } from "@/lib/i18n";
 import { createFileRoute, Link, Outlet, redirect } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
 import { loadCrm } from "@/lib/mock-data";
-
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
   beforeLoad: async () => {
@@ -10,28 +10,34 @@ export const Route = createFileRoute("/_authenticated")({
     await loadCrm();
     return { user: data.user };
   },
-  pendingComponent: () => (
-    <div className="p-10 text-sm text-muted-foreground">Loading your workspace…</div>
-  ),
-  errorComponent: ({ error }) => (
-    <div className="space-y-4 p-10">
-      <h1 className="text-xl font-semibold">Workspace access</h1>
-      <p role="alert">
-        {error instanceof Error ? error.message : "Could not load your workspace."}
-      </p>
-      <p>Ask your workspace administrator for an invitation if you need access.</p>
-      <div className="flex gap-4">
-        <Link to="/">Return to website</Link>
-        <button
-          onClick={async () => {
-            await supabase.auth.signOut();
-            window.location.assign("/auth");
-          }}
-        >
-          Sign out
-        </button>
+  pendingComponent: function PendingComponent() {
+    const { t: ui } = useI18n();
+    return (
+      <div className="p-10 text-sm text-muted-foreground">{ui("Loading your workspace\u2026")}</div>
+    );
+  },
+  errorComponent: function WorkspaceError({ error }) {
+    const { t: ui } = useI18n();
+    return (
+      <div className="space-y-4 p-10">
+        <h1 className="text-xl font-semibold">{ui("Workspace access")}</h1>
+        <p role="alert">
+          {error instanceof Error ? error.message : ui("Could not load your workspace.")}
+        </p>
+        <p>{ui("Ask your workspace administrator for an invitation if you need access.")}</p>
+        <div className="flex gap-4">
+          <Link to="/">{ui("Return to website")}</Link>
+          <button
+            onClick={async () => {
+              await supabase.auth.signOut();
+              window.location.assign("/auth");
+            }}
+          >
+            {ui("Sign out")}
+          </button>
+        </div>
       </div>
-    </div>
-  ),
+    );
+  },
   component: () => <Outlet />,
 });

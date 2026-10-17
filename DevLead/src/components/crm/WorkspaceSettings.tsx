@@ -1,3 +1,4 @@
+import { useI18n } from "@/lib/i18n";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { Trash2, UserPlus } from "lucide-react";
@@ -23,11 +24,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { workspace } from "@/lib/mock-data";
-
 // software schema isn't in generated types
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const db = () => (supabase as any).schema("software");
-
 type Role = "owner" | "admin" | "manager" | "member";
 const ASSIGNABLE: Role[] = ["admin", "manager", "member"];
 const ROLE_INFO: Record<Role, string> = {
@@ -44,8 +43,12 @@ type Member = {
   role: Role;
   joined_at: string;
 };
-type Invite = { id: string; email: string; role: Role; created_at: string };
-
+type Invite = {
+  id: string;
+  email: string;
+  role: Role;
+  created_at: string;
+};
 function Section({
   title,
   text,
@@ -55,18 +58,19 @@ function Section({
   text: string;
   children: React.ReactNode;
 }) {
+  const { t: ui, locale: uiLocale } = useI18n();
   return (
     <section className="grid gap-4 rounded-lg border bg-card p-5 md:grid-cols-[220px_1fr]">
       <div>
-        <h2 className="font-semibold">{title}</h2>
-        <p className="text-xs text-muted-foreground">{text}</p>
+        <h2 className="font-semibold">{ui(title)}</h2>
+        <p className="text-xs text-muted-foreground">{ui(text)}</p>
       </div>
       <div className="min-w-0 space-y-4">{children}</div>
     </section>
   );
 }
-
 export function WorkspaceSettings() {
+  const { t: ui, locale: uiLocale } = useI18n();
   const isAdmin = workspace.role === "owner" || workspace.role === "admin";
   const [me, setMe] = useState("");
   const [members, setMembers] = useState<Member[] | null>(null);
@@ -79,7 +83,6 @@ export function WorkspaceSettings() {
     text: string;
     run: () => Promise<void>;
   } | null>(null);
-
   const load = useCallback(async () => {
     const [{ data: u }, m, i] = await Promise.all([
       supabase.auth.getUser(),
@@ -96,7 +99,9 @@ export function WorkspaceSettings() {
       setMembers([]);
       return;
     }
-    const rows = m.data as (Omit<Member, "avatar_url"> & { avatar_path: string | null })[];
+    const rows = m.data as (Omit<Member, "avatar_url"> & {
+      avatar_path: string | null;
+    })[];
     const paths = rows.map((r) => r.avatar_path).filter(Boolean) as string[];
     const urls: Record<string, string> = {};
     if (paths.length) {
@@ -113,8 +118,14 @@ export function WorkspaceSettings() {
   useEffect(() => {
     load();
   }, [load]);
-
-  const act = async (fn: () => Promise<{ error: { message: string } | null }>, ok: string) => {
+  const act = async (
+    fn: () => Promise<{
+      error: {
+        message: string;
+      } | null;
+    }>,
+    ok: string,
+  ) => {
     const { error } = await fn();
     if (error) {
       toast.error(error.message);
@@ -123,12 +134,11 @@ export function WorkspaceSettings() {
     toast.success(ok);
     load();
   };
-
   const saveName = async (e: React.FormEvent) => {
     e.preventDefault();
     const v = name.trim();
     if (!v || v.length > 80) {
-      toast.error("Workspace name must be 1–80 characters.");
+      toast.error(ui("Workspace name must be 1–80 characters."));
       return;
     }
     const { error } = await db().from("workspaces").update({ name: v }).eq("id", workspace.id);
@@ -137,18 +147,17 @@ export function WorkspaceSettings() {
       return;
     }
     workspace.name = v;
-    toast.success("Workspace renamed");
+    toast.success(ui("Workspace renamed"));
   };
-
   const invite = async (e: React.FormEvent) => {
     e.preventDefault();
     const em = invEmail.trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em) || em.length > 255) {
-      toast.error("Enter a valid email address.");
+      toast.error(ui("Enter a valid email address."));
       return;
     }
     if (members?.some((m) => m.email.toLowerCase() === em)) {
-      toast.error("That person is already a member.");
+      toast.error(ui("That person is already a member."));
       return;
     }
     const { data: u } = await supabase.auth.getUser();
@@ -161,16 +170,15 @@ export function WorkspaceSettings() {
     );
     setInvEmail("");
   };
-
   return (
     <div className="space-y-5">
       <Section
-        title="Workspace"
-        text={
+        title={ui("Workspace")}
+        text={ui(
           isAdmin
             ? "Name shown to everyone in this workspace."
-            : "Only admins can rename the workspace."
-        }
+            : "Only admins can rename the workspace.",
+        )}
       >
         <form onSubmit={saveName} className="flex gap-2">
           <Input
@@ -181,13 +189,16 @@ export function WorkspaceSettings() {
           />
           {isAdmin && (
             <Button type="submit" variant="outline" disabled={name.trim() === workspace.name}>
-              Save
+              {ui("Save")}
             </Button>
           )}
         </form>
       </Section>
 
-      <Section title="Members" text="Everyone with access to this workspace and their role.">
+      <Section
+        title={ui("Members")}
+        text={ui("Everyone with access to this workspace and their role.")}
+      >
         {!members ? (
           <div className="space-y-2">
             {[0, 1].map((i) => (
@@ -202,7 +213,11 @@ export function WorkspaceSettings() {
               return (
                 <div key={m.user_id} className="flex flex-wrap items-center gap-3 p-3">
                   {m.avatar_url ? (
-                    <img src={m.avatar_url} alt="" className="h-9 w-9 rounded-full object-cover" />
+                    <img
+                      src={m.avatar_url}
+                      alt={ui("")}
+                      className="h-9 w-9 rounded-full object-cover"
+                    />
                   ) : (
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-xs font-bold uppercase text-primary-foreground">
                       {label.slice(0, 2)}
@@ -212,11 +227,13 @@ export function WorkspaceSettings() {
                     <p className="truncate text-sm font-medium">
                       {label}
                       {m.user_id === me && (
-                        <span className="ml-1 text-xs text-muted-foreground">(you)</span>
+                        <span className="ml-1 text-xs text-muted-foreground">{ui("(you)")}</span>
                       )}
                     </p>
                     <p className="truncate text-xs text-muted-foreground">
-                      {m.email} · joined {new Date(m.joined_at).toLocaleDateString()}
+                      {m.email}
+                      {ui(" \u00B7 joined ")}
+                      {new Date(m.joined_at).toLocaleDateString(uiLocale)}
                     </p>
                   </div>
                   {editable ? (
@@ -241,7 +258,7 @@ export function WorkspaceSettings() {
                         <SelectContent>
                           {ASSIGNABLE.map((r) => (
                             <SelectItem key={r} value={r} className="capitalize">
-                              {r}
+                              {ui(r)}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -249,7 +266,7 @@ export function WorkspaceSettings() {
                       <Button
                         size="icon"
                         variant="ghost"
-                        aria-label={`Remove ${label}`}
+                        aria-label={ui(`Remove ${label}`)}
                         onClick={() =>
                           setConfirm({
                             title: `Remove ${label}?`,
@@ -272,7 +289,7 @@ export function WorkspaceSettings() {
                     </>
                   ) : (
                     <Badge variant="secondary" className="capitalize">
-                      {m.role}
+                      {ui(m.role)}
                     </Badge>
                   )}
                 </div>
@@ -283,19 +300,19 @@ export function WorkspaceSettings() {
       </Section>
 
       <Section
-        title="Invitations"
-        text={
+        title={ui("Invitations")}
+        text={ui(
           isAdmin
             ? "Invitations expire after 7 days. People join with the chosen role after verifying that email."
-            : "Pending invitations. Only admins can invite people."
-        }
+            : "Pending invitations. Only admins can invite people.",
+        )}
       >
         {isAdmin && (
           <form onSubmit={invite} className="flex flex-wrap gap-2">
             <Input
               type="email"
               required
-              placeholder="colleague@company.com"
+              placeholder={ui("colleague@company.com")}
               className="min-w-48 flex-1"
               value={invEmail}
               onChange={(e) => setInvEmail(e.target.value)}
@@ -307,31 +324,31 @@ export function WorkspaceSettings() {
               <SelectContent>
                 {ASSIGNABLE.map((r) => (
                   <SelectItem key={r} value={r} className="capitalize">
-                    {r}
+                    {ui(r)}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
             <Button type="submit">
               <UserPlus className="mr-2 h-4 w-4" />
-              Invite
+              {ui("Invite")}
             </Button>
           </form>
         )}
         {invites.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No pending invitations.</p>
+          <p className="text-sm text-muted-foreground">{ui("No pending invitations.")}</p>
         ) : (
           <div className="divide-y rounded-md border">
             {invites.map((i) => (
               <div key={i.id} className="flex items-center gap-3 p-3 text-sm">
                 <span className="min-w-0 flex-1 truncate">{i.email}</span>
                 <Badge variant="outline" className="capitalize">
-                  {i.role}
+                  {ui(i.role)}
                 </Badge>
                 <span className="text-xs text-muted-foreground">
                   {Date.now() - new Date(i.created_at).getTime() >= 7 * 86400000
-                    ? "Expired — cancel and invite again"
-                    : `Expires ${new Date(new Date(i.created_at).getTime() + 7 * 86400000).toLocaleDateString()}`}
+                    ? ui("Expired — cancel and invite again")
+                    : `${ui("Expires")} ${new Date(new Date(i.created_at).getTime() + 7 * 86400000).toLocaleDateString(uiLocale)}`}
                 </span>
                 {isAdmin && (
                   <Button
@@ -349,7 +366,7 @@ export function WorkspaceSettings() {
                       })
                     }
                   >
-                    Cancel
+                    {ui("Cancel")}
                   </Button>
                 )}
               </div>
@@ -357,16 +374,16 @@ export function WorkspaceSettings() {
           </div>
         )}
         <p className="text-xs text-muted-foreground">
-          No email is sent automatically — share the sign-up link with them yourself.
+          {ui("No email is sent automatically \u2014 share the sign-up link with them yourself.")}
         </p>
       </Section>
 
-      <Section title="Roles" text="What each role can do.">
+      <Section title={ui("Roles")} text={ui("What each role can do.")}>
         <div className="space-y-2">
           {(Object.keys(ROLE_INFO) as Role[]).map((r) => (
             <div key={r} className="flex items-start gap-3 text-sm">
               <Badge variant="secondary" className="w-20 justify-center capitalize">
-                {r}
+                {ui(r)}
               </Badge>
               <span className="text-muted-foreground">{ROLE_INFO[r]}</span>
             </div>
@@ -381,14 +398,14 @@ export function WorkspaceSettings() {
             <AlertDialogDescription>{confirm?.text}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{ui("Cancel")}</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 confirm?.run();
                 setConfirm(null);
               }}
             >
-              Confirm
+              {ui("Confirm")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

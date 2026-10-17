@@ -1,3 +1,4 @@
+import { useI18n } from "@/lib/i18n";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { ChevronDown, SlidersHorizontal, LayoutGrid, List } from "lucide-react";
@@ -7,7 +8,6 @@ import { MapView } from "@/components/MapView";
 import { QueryStatus } from "@/components/QueryStatus";
 import { useListings } from "@/lib/data";
 import { pageHead } from "@/lib/head";
-
 export const Route = createFileRoute("/discover")({
   head: pageHead(
     "Discover apartments",
@@ -15,8 +15,8 @@ export const Route = createFileRoute("/discover")({
   ),
   component: Discover,
 });
-
 function Discover() {
+  const { t: ui } = useI18n();
   const query = useListings();
   const listings = query.isError ? [] : (query.data ?? []);
   const [active, setActive] = useState("1");
@@ -30,30 +30,37 @@ function Discover() {
                 key={f}
                 className="flex items-center gap-2 rounded-full border bg-card px-4 py-2 text-sm"
               >
-                {f}
+                {ui(f)}
                 <ChevronDown className="h-4 w-4" />
               </button>
             ))}
             <button
               className="ml-auto grid h-10 w-10 place-items-center rounded-full border bg-card"
-              aria-label="More filters"
+              aria-label={ui("More filters")}
             >
               <SlidersHorizontal className="h-4 w-4" />
             </button>
           </div>
           <div className="mt-6 flex items-center gap-3">
-            <h1 className="text-2xl font-bold tracking-tight">Belgrade, Serbia</h1>
-            <span className="text-sm text-muted-foreground">{listings.length} results</span>
+            <h1 className="text-2xl font-bold tracking-tight">{ui("Belgrade, Serbia")}</h1>
+            <span className="text-sm text-muted-foreground">
+              {listings.length}
+              {ui(" results")}
+            </span>
             <div className="flex-1" />
             <span className="text-sm text-muted-foreground">
-              Sort by <b className="text-foreground">Newest</b>
+              {ui("Sort by")}
+              <b className="text-foreground">{ui("Newest")}</b>
             </span>
-            <button className="grid h-9 w-9 place-items-center rounded-full" aria-label="Grid">
+            <button
+              className="grid h-9 w-9 place-items-center rounded-full"
+              aria-label={ui("Grid")}
+            >
               <LayoutGrid className="h-4 w-4" />
             </button>
             <button
               className="grid h-9 w-9 place-items-center rounded-full bg-accent text-accent-foreground"
-              aria-label="List"
+              aria-label={ui("List")}
             >
               <List className="h-4 w-4" />
             </button>
@@ -63,7 +70,9 @@ function Discover() {
               pending={query.isPending}
               error={query.error}
               empty={!listings.length}
-              emptyText="No active listings are available yet. Check back when rental sources are connected."
+              emptyText={ui(
+                "No active listings are available yet. Check back when rental sources are connected.",
+              )}
               retry={query.refetch}
             />
             {listings.map((l) => (
