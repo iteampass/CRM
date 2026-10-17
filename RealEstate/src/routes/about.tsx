@@ -27,7 +27,7 @@ const features = [
     icon: MessagesSquare,
     title: "Explore social sources",
     description:
-      "Search Reddit and X for rental posts by location, then open the original post to learn more.",
+      "Search the web for rentals with custom keywords and a city, town or region, then browse results in one list.",
   },
 ];
 

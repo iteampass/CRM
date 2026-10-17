@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { ChevronDown, SlidersHorizontal, LayoutGrid, List } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
-import { SocialRentalSearch } from "@/components/SocialRentalSearch";
+import { WebRentalSearch } from "@/components/WebRentalSearch";
 import { ListingCard } from "@/components/ListingCard";
 import { MapView } from "@/components/MapView";
 import { QueryStatus } from "@/components/QueryStatus";
@@ -66,7 +66,7 @@ function Discover() {
               <List className="h-4 w-4" />
             </button>
           </div>
-          <SocialRentalSearch />
+          <WebRentalSearch />
           <div className="mt-5 space-y-4">
             <QueryStatus
               pending={query.isPending}

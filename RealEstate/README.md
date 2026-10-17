@@ -62,3 +62,24 @@ Missing configuration, denied access, provider limits, and outages appear per so
 a failure on one source preserves results from the other. Searches run only on form
 submission, without automatic retries, background polling, or database persistence.
 No database migration is needed. Live verification requires configured provider accounts.
+
+## Web rental search
+
+Discover now shows web search instead of the deferred Reddit/X interface. Enter one
+city, town or region and up to five keyword phrases (one per line). Each phrase runs
+as a separate location-scoped Brave web search. Results are merged by canonical URL
+(tracking parameters removed), with website filtering, sorting and pagination.
+A page requests up to 20 results per phrase; up to ten pages are supported. Different
+URLs for the same apartment are not automatically merged. Results may include
+category pages and expired listings; prices, availability and coordinates are not inferred.
+
+Set `BRAVE_SEARCH_API_KEY` in the server environment and restart the app. Obtain a key
+from https://api-dashboard.search.brave.com/ with a plan supporting Web Search.
+Never use a `VITE_` prefix. The key stays server-side. Without it, the UI explains the
+missing connection and provides Google, Bing and Brave search links. External search
+pages do not automatically import results into the list.
+
+Automatic search requires sign-in and uses the existing 15-second user throttle.
+Searches are bounded, run only on demand, preserve partial results on failure, and
+have 10-second per-request timeouts. Results remain in component memory for the visit;
+no database migrations or provider subscriptions are created by this change.
