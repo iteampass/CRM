@@ -1,3 +1,4 @@
+import { FacebookRentalSearch } from "./FacebookRentalSearch";
 import { SaveWebSearch } from "./SaveWebSearch";
 import { ExtractRentalButton } from "./ExtractRentalButton";
 import { useState } from "react";
@@ -39,6 +40,7 @@ function SearchForm({
   const [editedLocation, setLocation] = useState<string | null>(null);
   const location = editedLocation ?? initialSearch?.location ?? profileLocation;
   const [expanded, setExpanded] = useState(true);
+  const [facebookBusy, setFacebookBusy] = useState(false);
   const [keywords, setKeywords] = useState(
     initialSearch?.keywords.join("\n") ?? "apartments for rent\nizdavanje stanova",
   );
@@ -59,7 +61,13 @@ function SearchForm({
     onSuccess: (data, input) => {
       setSubmitted(input);
       setResults((previous) =>
-        mergeResults(input.page ? [...previous, ...data.results] : data.results),
+        mergeResults(
+          input.page ||
+            (submitted?.location === input.location &&
+              JSON.stringify(submitted.keywords) === JSON.stringify(input.keywords))
+            ? [...previous, ...data.results]
+            : data.results,
+        ),
       );
     },
     retry: false,
@@ -107,9 +115,14 @@ function SearchForm({
           onSubmit={(event) => {
             event.preventDefault();
             setValidation(!parsed.success);
-            if (parsed.success && signedIn) {
-              setResults([]);
-              setSubmitted(null);
+            if (parsed.success && signedIn && !facebookBusy) {
+              if (
+                submitted?.location !== parsed.data.location ||
+                JSON.stringify(submitted.keywords) !== JSON.stringify(parsed.data.keywords)
+              ) {
+                setResults([]);
+                setSubmitted(null);
+              }
               setSite("");
               search.mutate(parsed.data);
             }
@@ -150,7 +163,7 @@ function SearchForm({
           {signedIn ? (
             <button
               type="submit"
-              disabled={search.isPending}
+              disabled={search.isPending || facebookBusy}
               className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
             >
               {t(search.isPending ? "Searching…" : "Find rentals")}
@@ -161,6 +174,28 @@ function SearchForm({
             </Link>
           )}
         </form>
+        {signedIn && (
+          <FacebookRentalSearch
+            location={location}
+            keywords={keywords}
+            disabled={search.isPending}
+            onBusy={setFacebookBusy}
+            onResults={(data, input) => {
+              if (!data.configured) return;
+              const same =
+                submitted?.location === input.location &&
+                JSON.stringify(submitted.keywords) === JSON.stringify(input.keywords);
+              setResults((previous) =>
+                mergeResults(same ? [...previous, ...data.results] : data.results),
+              );
+              if (!same) {
+                search.reset();
+                setSite("");
+                setSubmitted(input);
+              }
+            }}
+          />
+        )}
         {signedIn && <SaveWebSearch location={location} keywords={keywords} />}
         {parsed.success && (
           <details className="mt-4 text-sm">
@@ -261,11 +296,18 @@ function SearchForm({
               </h3>
               <p className="mt-2 break-words text-sm">{result.description}</p>
               <p className="mt-2 text-xs text-muted-foreground">
-                {t("Matched keywords")}: {result.keywords.join(" · ")}
+                {result.apifySnapshot
+                  ? t("Source: Apify Facebook Search")
+                  : `${t("Matched keywords")}: ${result.keywords.join(" · ")}`}
               </p>
               {signedIn && (
                 <ExtractRentalButton
-                  item={{ url: result.url, title: result.title, description: result.description }}
+                  item={{
+                    url: result.url,
+                    title: result.title,
+                    description: result.description,
+                    ...(result.apifySnapshot ? { apifySnapshot: result.apifySnapshot } : {}),
+                  }}
                 />
               )}
             </article>
@@ -273,7 +315,7 @@ function SearchForm({
           {search.data?.more && submitted && (
             <button
               className="rounded-md border px-4 py-2 text-sm disabled:opacity-50"
-              disabled={search.isPending}
+              disabled={search.isPending || facebookBusy}
               onClick={() => search.mutate({ ...submitted, page: submitted.page + 1 })}
             >
               {t(search.isPending ? "Searching…" : "Load more results")}

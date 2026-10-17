@@ -885,5 +885,18 @@
   "Search saved": "Претрага је сачувана",
   "Browse saved searches": "Прегледај сачуване претраге",
   "Open web search": "Отвори веб претрагу",
-  "Web searches need a valid location and keyword lines.": "Веб претрага захтева исправну локацију и кључне речи."
+  "Web searches need a valid location and keyword lines.": "Веб претрага захтева исправну локацију и кључне речи.",
+  "Search Facebook (Apify)": "Претражи Facebook (Apify)",
+  "Searching Facebook…": "Претраживање Facebook-а…",
+  "Search public Facebook posts by town and keywords. Up to 50 results; this uses your Apify account credits and may take 90 seconds.": "Претражите јавне Facebook објаве по месту и кључним речима. До 50 резултата; користи кредите Apify налога и може трајати 90 секунди.",
+  "Facebook search is not connected. Configure APIFY_API_TOKEN on the server.": "Facebook претрага није повезана. Подесите APIFY_API_TOKEN на серверу.",
+  "Please wait two minutes between Facebook searches.": "Сачекајте два минута између Facebook претрага.",
+  "Apify is rate limited. Please try again later.": "Достигнуто је Apify ограничење захтева. Покушајте касније.",
+  "Apify access is unavailable. Check the API token, Actor access and account balance.": "Apify приступ није доступан. Проверите API токен, приступ Actor-у и стање налога.",
+  "Facebook scraping did not finish successfully. Check the run in Apify before retrying.": "Facebook прикупљање није успешно завршено. Проверите извршавање у Apify пре поновног покушаја.",
+  "Apify returned no usable public posts. Try different keywords.": "Apify није вратио употребљиве јавне објаве. Покушајте са другим кључним речима.",
+  "No public Facebook posts found. Try different keywords.": "Нису пронађене јавне Facebook објаве. Покушајте са другим кључним речима.",
+  "Source: Apify Facebook Search": "Извор: Apify Facebook претрага",
+  "Facebook result could not be verified. Search Facebook again.": "Facebook резултат није могуће проверити. Поновите Facebook претрагу.",
+  "Facebook result has expired. Search Facebook again.": "Facebook резултат је истекао. Поновите Facebook претрагу."
 }

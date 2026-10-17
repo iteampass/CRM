@@ -99,7 +99,7 @@ export function groundExtraction(value: ApartmentExtraction, content: string): A
     };
   return cleaned;
 }
-export async function extractRental(input: ImportInput) {
+export async function extractRental(input: ImportInput, apifyContent?: string) {
   const key = process.env["OPENAI_API_KEY"];
   if (!key)
     throw new Error("AI extraction is not connected. Configure OPENAI_API_KEY on the server.");
@@ -107,27 +107,33 @@ export async function extractRental(input: ImportInput) {
   if (!url) throw new Error("Enter a public listing URL.");
   const model = process.env["RENTAL_EXTRACTION_MODEL"] || "gpt-4o-mini";
   const raw: Record<string, unknown> = {
-    search_result: input,
+    search_result: { url: input.url, title: input.title, description: input.description },
     retrieved_at: new Date().toISOString(),
-    reader: "Jina Reader",
+    reader: apifyContent ? "Apify Facebook Search Scraper" : "Jina Reader",
     model,
   };
   try {
-    const headers: Record<string, string> = {
-      Accept: "application/json",
-      "X-With-Images-Summary": "true",
-      "X-With-Links-Summary": "true",
-      "X-Robots-Txt": "*",
-    };
-    if (process.env["JINA_API_KEY"])
-      headers["Authorization"] = `Bearer ${process.env["JINA_API_KEY"]}`;
-    const response = await fetch(`https://r.jina.ai/${url}`, {
-      headers,
-      redirect: "error",
-      signal: AbortSignal.timeout(30000),
-    });
-    if (!response.ok) throw new Error("reader");
-    const body = readerSchema.parse(await boundedJson(response));
+    let body: { data: { content: string } };
+    if (apifyContent) {
+      body = { data: { content: apifyContent } };
+      raw["apify_response"] = JSON.parse(apifyContent);
+    } else {
+      const headers: Record<string, string> = {
+        Accept: "application/json",
+        "X-With-Images-Summary": "true",
+        "X-With-Links-Summary": "true",
+        "X-Robots-Txt": "*",
+      };
+      if (process.env["JINA_API_KEY"])
+        headers["Authorization"] = `Bearer ${process.env["JINA_API_KEY"]}`;
+      const response = await fetch(`https://r.jina.ai/${url}`, {
+        headers,
+        redirect: "error",
+        signal: AbortSignal.timeout(30000),
+      });
+      if (!response.ok) throw new Error("reader");
+      body = readerSchema.parse(await boundedJson(response));
+    }
     raw["reader_response"] = body;
     const content = body.data.content.slice(0, 60000);
     raw["ai_input_truncated"] = content.length < body.data.content.length;

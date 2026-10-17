@@ -25,6 +25,9 @@ export const importInput = z.object({
     .refine((value) => !!publicWebUrl(value), "Enter a public listing URL."),
   title: z.string().max(1000),
   description: z.string().max(10000),
+  apifySnapshot: z
+    .object({ payload: z.string().max(130000), signature: z.string().regex(/^[a-f0-9]{64}$/) })
+    .optional(),
 });
 export type ImportInput = z.infer<typeof importInput>;
 const field = z.string().max(2000).nullable();

@@ -12,7 +12,7 @@ export const extractAndSaveRental = createServerFn({ method: "POST" })
     const source_url = publicWebUrl(data.url)!;
     const { data: existing, error: readError } = await db
       .from("imported_rentals")
-      .select("id,status")
+      .select("id,status,raw_data")
       .eq("user_id", context.userId)
       .eq("source_url", source_url)
       .maybeSingle();
@@ -22,7 +22,14 @@ export const extractAndSaveRental = createServerFn({ method: "POST" })
     const { checkSearchLimit } = await import("./social-search.server");
     checkSearchLimit(`rental-import:${context.userId}`);
     const { extractRental } = await import("./rental-import.server");
-    const result = await extractRental({ ...data, url: source_url });
+    const { verifyFacebookSnapshot } = await import("./apify-facebook.server");
+    const sourceContent = data.apifySnapshot
+      ? verifyFacebookSnapshot(data.apifySnapshot, context.userId, source_url)
+      : existing?.raw_data?.reader === "Apify Facebook Search Scraper" &&
+          existing.raw_data.apify_response
+        ? JSON.stringify(existing.raw_data.apify_response).slice(0, 60000)
+        : undefined;
+    const result = await extractRental({ ...data, url: source_url }, sourceContent);
     const values = {
       ...result.fields,
       user_id: context.userId,

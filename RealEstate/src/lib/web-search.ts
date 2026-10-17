@@ -17,6 +17,7 @@ export type RentalWebResult = {
   description: string;
   site: string;
   keywords: string[];
+  apifySnapshot?: { payload: string; signature: string };
 };
 export type WebSearchResult = {
   results: RentalWebResult[];
@@ -53,7 +54,10 @@ export function mergeResults(results: RentalWebResult[]) {
     unique.set(
       url,
       previous
-        ? { ...previous, keywords: [...new Set([...previous.keywords, ...result.keywords])] }
+        ? {
+            ...(result.apifySnapshot ? result : previous),
+            keywords: [...new Set([...previous.keywords, ...result.keywords])],
+          }
         : { ...result, url },
     );
   }

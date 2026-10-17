@@ -133,3 +133,34 @@ when the user clicks Find rentals, not automatically when opening a saved search
 Migration `20261017131726_saved_web_search_keywords.sql` adds `keywords` with an empty
 array default, preserving older saved searches and their existing per-user RLS.
 `supabase/tests/saved_web_searches.sql` verifies save/read/edit, defaults and isolation.
+
+## Apify Facebook search
+
+Discover → **Search Facebook (Apify)** runs the maintained
+[apify/facebook-search-scraper](https://apify.com/apify/facebook-search-scraper/input-schema)
+Actor with `searchType: "posts"`, the current keyword lines as `categories`, the town
+as `locations`, and `resultsLimit: 50`. It runs only when clicked, independently of
+Brave Search. Results from the same town/keywords merge into the current list and
+can be filtered by `facebook.com`. Saved search criteria can be reused with either button.
+
+Set **server-only** `APIFY_API_TOKEN` to your Apify API token and restart/redeploy.
+The account must have access to this Actor and sufficient credits; provider charges
+apply. Do not prefix the token with `VITE_` or enter it as a search keyword. Requests
+use a bearer header to the fixed Apify endpoint. No Facebook login cookies are used.
+Only public posts returned by the Actor are available; this does not access private
+Facebook groups or guarantee complete Facebook coverage.
+
+The synchronous Actor request sets a 90-second run timeout, 50-result response limit,
+and `maxTotalChargeUsd=1` (Apify's pay-per-event spending limit). HTTP timeout is 105
+seconds; response size is bounded to 4 MB. Runs have a two-minute per-user process-local
+cooldown and no automatic retries. For multiple replicas, add a shared gateway limit.
+If the HTTP connection fails, inspect the run in Apify Console before retrying;
+client disconnection does not cancel a remote run, which retains its server timeout.
+
+Usable posts carry a server-signed, user/source-bound snapshot valid for one hour.
+**Extract with AI** verifies that snapshot, uses the scraped post JSON instead of
+reopening Facebook via Jina, and retains the original post/media metadata in the
+imported record's raw data. Unknown property details remain unknown. AI extraction
+still requires `OPENAI_API_KEY`. Failed saved imports can retry from the stored Apify
+content without starting another scraping run. Media URLs remain source-hosted and
+may expire. No database migration is required for this integration.
