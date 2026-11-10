@@ -1,6 +1,6 @@
 # Shared CRM database
 
-Both apps use project `rtaszifelvzbvcbqgrig` (CRM). DevLead owns `software`; RealEstate owns `realestate`. Auth and Storage are shared project services.
+DevLead and RealEstate use project `rtaszifelvzbvcbqgrig` (CRM). DevLead owns `software`; RealEstate owns `realestate`. Auth and Storage are shared project services.
 
 ## Migration ownership
 
@@ -34,3 +34,7 @@ For an existing project, use incremental migrations only; **do not run either ba
 Advisors after the migration report intentional SECURITY DEFINER RPCs (`is_member`, `is_admin`, `list_members`, `join_demo_workspace`), the intentionally server-only `api_keys` table with RLS and no client policies, and an existing disabled leaked-password check. Membership RPCs remain privileged because they need to look up protected membership/Auth records; they validate the caller rather than trusting user metadata. No new anonymous access to private data was added.
 
 Advisor references: [privileged authenticated RPCs](https://supabase.com/docs/guides/database/database-linter?lint=0029_authenticated_security_definer_function_executable), [RLS without client policies](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy), and [leaked-password protection](https://supabase.com/docs/guides/auth/password-security#password-strength-and-leaked-password-protection).
+
+## HandyFlow preparation
+
+HandyFlow is being added in `handyflow`. Its applied migration is `migrations/20261110071547_bootstrap_handyflow_shared_project.sql`. Follow [the launch runbook](../HandyFlow/docs/shared-project-launch.md) for configuration, enrollment, storage, transfer planning, validation and remaining public-launch blockers. Do not apply HandyFlow's app-local historical migrations to CRM.
