@@ -1,0 +1,7 @@
+# Historical source-project migrations are retained for reference only.
+# Use the repository-root supabase directory for the shared destination.
+project_id = "rtaszifelvzbvcbqgrig"
+
+[api]
+schemas = ["public", "graphql_public", "software", "realestate", "handyflow"]
+extra_search_path = ["public", "extensions"]

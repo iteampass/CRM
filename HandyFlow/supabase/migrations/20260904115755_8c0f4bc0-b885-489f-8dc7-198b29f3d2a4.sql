@@ -1,0 +1,1 @@
+ALTER TABLE public.task_requests ADD COLUMN IF NOT EXISTS postpone_requested_time time without time zone;

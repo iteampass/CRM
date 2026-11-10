@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.refresh_handyman_rating() FROM authenticated, anon, public;
