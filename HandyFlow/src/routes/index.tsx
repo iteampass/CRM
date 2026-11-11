@@ -383,8 +383,8 @@ function ForHandymen() {
             return (
               <div key={title as string} className="p-2">
                 <I className="size-5 text-brand" />
-                <h3 className="mt-3 text-sm font-semibold text-foreground">{title as string}</h3>
-                <p className="mt-1.5 text-sm text-muted-foreground">{copy as string}</p>
+                <h3 className="mt-3 text-sm font-semibold text-foreground">{tr(title as string)}</h3>
+                <p className="mt-1.5 text-sm text-muted-foreground">{tr(copy as string)}</p>
               </div>
             );
           })}
