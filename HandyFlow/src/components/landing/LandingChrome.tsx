@@ -159,6 +159,7 @@ export function LandingFooter() {
 }
 
 function FooterCol({ title, items }: { title: string; items: [string, string][] }) {
+  const { t: tr } = useI18n();
   return (
     <div>
       <h3 className="text-sm font-semibold text-foreground">{title}</h3>
@@ -169,7 +170,7 @@ function FooterCol({ title, items }: { title: string; items: [string, string][] 
               href={href}
               className="text-sm text-muted-foreground transition-colors hover:text-foreground"
             >
-              {label}
+              {tr(label)}
             </a>
           </li>
         ))}
