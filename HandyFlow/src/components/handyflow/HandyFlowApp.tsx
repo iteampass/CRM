@@ -1,4 +1,4 @@
-import { useI18n } from "@/lib/i18n";
+import { LanguageSwitcher, useI18n } from "@/lib/i18n";
 import { GetProDialog } from "./GetProDialog";
 import { FlagImg } from "@/components/CountrySelect";
 import { COUNTRIES } from "@/lib/countries";
@@ -303,6 +303,7 @@ function Topbar({
       <button className="mobile-menu" onClick={() => setOpen(true)} aria-label={tr("Open navigation")}>
         <Menu />
       </button>
+      <LanguageSwitcher mobile />
       <div className="crumb">
         <span className="crumb-muted">{tr("Workspace")}</span>
         <ChevronRight />

@@ -1,4 +1,4 @@
-import { useI18n } from "@/lib/i18n";
+import { LanguageSwitcher, useI18n } from "@/lib/i18n";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState, type FormEvent } from "react";
 import { Eye, EyeOff, Hammer, Loader2 } from "lucide-react";
@@ -104,6 +104,7 @@ function ResetPasswordPage() {
       </Link>
 
       <div className="w-full max-w-sm">
+        <div className="mb-4 flex justify-end md:hidden"><LanguageSwitcher mobile /></div>
         <h1 className="font-display text-2xl font-semibold tracking-tight">{tr("Set a new password")}</h1>
         <p className="mt-1 text-sm text-muted-foreground">{tr("Choose a new password for your HandyFlow account.")}</p>
 

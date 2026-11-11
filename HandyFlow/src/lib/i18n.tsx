@@ -70,10 +70,12 @@ export function useI18n() {
   return useContext(LanguageContext);
 }
 
-export function LanguageSwitcher() {
+export function LanguageSwitcher({ mobile = false }: { mobile?: boolean }) {
   const { language, setLanguage } = useI18n();
   return (
-    <label className="fixed bottom-20 right-4 z-50 flex items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground shadow-md md:bottom-4">
+    <label className={mobile
+      ? "inline-flex shrink-0 items-center gap-1 rounded-lg border border-border bg-background px-2 py-2 text-xs text-foreground md:hidden"
+      : "fixed bottom-4 right-4 z-50 hidden items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground shadow-md md:flex"}>
       <span aria-hidden="true">◎</span>
       <span className="sr-only">Language / Језик</span>
       <select

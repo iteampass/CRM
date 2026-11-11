@@ -1,4 +1,4 @@
-import { useI18n } from "@/lib/i18n";
+import { LanguageSwitcher, useI18n } from "@/lib/i18n";
 import { Link } from "@tanstack/react-router";
 import { Hammer, Menu, X } from "lucide-react";
 import { useState } from "react";
@@ -52,6 +52,8 @@ export function LandingHeader() {
           >{tr("Get Started")}</Link>
         </div>
 
+        <div className="flex items-center gap-2 md:hidden">
+        <LanguageSwitcher mobile />
         <button
           type="button"
           aria-label={open ? tr("Close menu") : tr("Open menu")}
@@ -60,6 +62,7 @@ export function LandingHeader() {
         >
           {open ? <X className="size-4" /> : <Menu className="size-4" />}
         </button>
+        </div>
       </div>
 
       {open && (

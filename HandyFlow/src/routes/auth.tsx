@@ -1,4 +1,4 @@
-import { useI18n } from "@/lib/i18n";
+import { LanguageSwitcher, useI18n } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPublicTestimonials } from "@/lib/testimonials.functions";
@@ -355,6 +355,7 @@ function AuthPage() {
 
       {/* Form panel */}
       <div className="flex min-h-screen flex-col px-5 py-8 sm:px-10">
+        <div className="mb-4 flex justify-end md:hidden"><LanguageSwitcher mobile /></div>
         <Link to="/" className="flex w-fit items-center gap-2 text-lg font-semibold lg:hidden">
           <span className="inline-flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <Hammer className="size-4.5" />

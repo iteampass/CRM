@@ -1,6 +1,6 @@
 # Interface languages
 
-HandyFlow supports English and Serbian Cyrillic (Српски). The language selector is available on public pages and in the workspace. The choice is saved per browser under `handyflow-language`; blocked storage falls back to an in-memory choice. The first render uses English for matching server/client hydration, then restores the saved language. The document language changes to `sr-Cyrl` for Serbian.
+HandyFlow supports English and Serbian Cyrillic (Српски). The language selector is available on public pages and in the workspace. On mobile it sits beside the hamburger menu; authentication pages show it inline above the form. Desktop retains the corner selector. The choice is saved per browser under `handyflow-language`; blocked storage falls back to an in-memory choice. The first render uses English for matching server/client hydration, then restores the saved language. The document language changes to `sr-Cyrl` for Serbian.
 
 Use `useI18n()` and `t("English interface text")` for application-owned text. Add its Serbian equivalent to `src/lib/locales/sr.json`. English is the fallback when a key is missing. Never translate stored enum values, IDs, routes, input values, customer names, job descriptions, messages or testimonials. Currency stays USD; locale formatting is independent of currency conversion.
 
