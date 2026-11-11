@@ -1,3 +1,4 @@
+import { useI18n } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getPublicTestimonials } from "@/lib/testimonials.functions";
@@ -49,6 +50,7 @@ const brandPoints = [
 ];
 
 function AuthPage() {
+  const { t: tr, locale } = useI18n();
   const navigate = useNavigate();
   const fetchTestimonials = useServerFn(getPublicTestimonials);
   const { data: testimonials } = useQuery({
@@ -172,9 +174,9 @@ function AuthPage() {
       void clearConfirmationSession(supabase.auth).then(() => {
         if (cancelled) return;
         window.history.replaceState(window.history.state, "", window.location.pathname);
-        toast.success("Email confirmed — sign in with your password to continue.");
+        toast.success(tr("Email confirmed — sign in with your password to continue."));
       }).catch((error) => {
-        if (!cancelled) toast.error(error instanceof Error ? error.message : "Unable to finish confirmation. Please try again.");
+        if (!cancelled) toast.error(tr(error instanceof Error ? error.message : "Unable to finish confirmation. Please try again."));
       }).finally(() => {
         if (!cancelled) setBusy(false);
       });
@@ -191,7 +193,7 @@ function AuthPage() {
         const user = await validateSession(supabase);
         if (user && !cancelled) await navigate({ to: "/dashboard", replace: true });
       } catch (error) {
-        if (!cancelled) toast.error(error instanceof Error ? error.message : "Unable to verify your account. Please try again.");
+        if (!cancelled) toast.error(tr(error instanceof Error ? error.message : "Unable to verify your account. Please try again."));
       } finally {
         validating = false;
       }
@@ -253,9 +255,9 @@ function AuthPage() {
         });
         if (error) throw error;
         toast.success(
-          data.session
+          tr(data.session
             ? "Account created — you're signed in."
-            : "Account created — check your email to confirm it.",
+            : "Account created — check your email to confirm it."),
         );
         resetForm();
         setMode("signin");
@@ -269,7 +271,7 @@ function AuthPage() {
         await navigate({ to: "/dashboard", replace: true });
       }
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong");
+      toast.error(tr(err instanceof Error ? err.message : "Something went wrong"));
     } finally {
       setBusy(false);
     }
@@ -283,10 +285,10 @@ function AuthPage() {
         redirectTo: `${window.location.origin}/reset-password`,
       });
       if (error) throw error;
-      toast.success("Check your email for a password reset link.");
+      toast.success(tr("Check your email for a password reset link."));
       setMode("signin");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Something went wrong");
+      toast.error(tr(err instanceof Error ? err.message : "Something went wrong"));
     } finally {
       setBusy(false);
     }
@@ -303,7 +305,7 @@ function AuthPage() {
       });
       if (error) throw error;
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Google sign-in failed");
+      toast.error(tr(err instanceof Error ? err.message : "Google sign-in failed"));
     }
   }
 
@@ -318,28 +320,22 @@ function AuthPage() {
             <span className="inline-flex size-10 items-center justify-center rounded-xl bg-brand-foreground/15 backdrop-blur-sm">
               <Hammer className="size-5" />
             </span>
-            <span className="font-display text-lg font-semibold tracking-tight">
-              Handy<span className="text-highlight">Flow</span>
+            <span className="font-display text-lg font-semibold tracking-tight">{tr("Handy")}<span className="text-highlight">{tr("Flow")}</span>
             </span>
           </Link>
 
           <div className="space-y-8">
-            <h2 className="font-display max-w-md text-4xl font-bold leading-[1.08] tracking-tight xl:text-5xl">
-              Home repairs,
-              <br />
-              <span className="text-highlight">done right.</span>
+            <h2 className="font-display max-w-md text-4xl font-bold leading-[1.08] tracking-tight xl:text-5xl">{tr("Home repairs,")}<br />
+              <span className="text-highlight">{tr("done right.")}</span>
             </h2>
-            <p className="max-w-md text-base leading-relaxed text-brand-foreground/85">
-              HandyFlow connects you with trusted local professionals — request work,
-              agree on details, and track the job from start to finish.
-            </p>
+            <p className="max-w-md text-base leading-relaxed text-brand-foreground/85">{tr("HandyFlow connects you with trusted local professionals — request work, agree on details, and track the job from start to finish.")}</p>
             <ul className="space-y-3.5">
               {brandPoints.map(({ icon: Icon, label }) => (
                 <li key={label} className="flex items-center gap-3 text-sm font-medium">
                   <span className="inline-flex size-8 items-center justify-center rounded-lg bg-brand-foreground/15 backdrop-blur-sm">
                     <Icon className="size-4" />
                   </span>
-                  {label}
+                  {tr(label)}
                 </li>
               ))}
             </ul>
@@ -362,25 +358,24 @@ function AuthPage() {
         <Link to="/" className="flex w-fit items-center gap-2 text-lg font-semibold lg:hidden">
           <span className="inline-flex size-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
             <Hammer className="size-4.5" />
-          </span>
-          Handy<span className="-ml-2 text-primary">Flow</span>
+          </span>{tr("Handy")}<span className="-ml-2 text-primary">{tr("Flow")}</span>
         </Link>
 
         <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center py-10">
         <div className="w-full">
         <h1 className="font-display text-2xl font-semibold tracking-tight">
           {mode === "signin"
-            ? "Welcome back"
+            ? tr("Welcome back")
             : mode === "signup"
-              ? "Create your account"
-              : "Reset your password"}
+              ? tr("Create your account")
+              : tr("Reset your password")}
         </h1>
         <p className="mt-1 text-sm text-muted-foreground">
           {mode === "signin"
-            ? "Sign in to your HandyFlow workspace."
+            ? tr("Sign in to your HandyFlow workspace.")
             : mode === "signup"
-              ? "Join HandyFlow as a client or a handyman."
-              : "Enter your email and we'll send you a reset link."}
+              ? tr("Join HandyFlow as a client or a handyman.")
+              : tr("Enter your email and we'll send you a reset link.")}
         </p>
 
         {mode !== "forgot" && (
@@ -395,14 +390,10 @@ function AuthPage() {
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.56-2.76c-.98.66-2.23 1.06-3.72 1.06-2.87 0-5.3-1.94-6.17-4.54H2.15v2.84A11 11 0 0 0 12 23Z" />
                 <path fill="#FBBC05" d="M5.83 14.1a6.6 6.6 0 0 1 0-4.2V7.06H2.15a11 11 0 0 0 0 9.88l3.68-2.84Z" />
                 <path fill="#EA4335" d="M12 5.36c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.07 14.97 1 12 1a11 11 0 0 0-9.85 6.06L5.83 9.9C6.7 7.3 9.13 5.36 12 5.36Z" />
-              </svg>
-              Continue with Google
-            </button>
+              </svg>{tr("Continue with Google")}</button>
 
             <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground">
-              <span className="h-px flex-1 bg-border" />
-              or
-              <span className="h-px flex-1 bg-border" />
+              <span className="h-px flex-1 bg-border" />{tr("or")}<span className="h-px flex-1 bg-border" />
             </div>
           </>
         )}
@@ -414,7 +405,7 @@ function AuthPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder="you@example.com"
+              placeholder={tr("you@example.com")}
               className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
             <button
@@ -422,9 +413,7 @@ function AuthPage() {
               disabled={busy}
               className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
             >
-              {busy && <Loader2 className="size-4 animate-spin" />}
-              Send reset link
-            </button>
+              {busy && <Loader2 className="size-4 animate-spin" />}{" "}{tr("Send reset link")}</button>
           </form>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-3">
@@ -435,52 +424,52 @@ function AuthPage() {
                     value={firstName}
                     onChange={(e) => setFirstName(e.target.value)}
                     required
-                    placeholder="First name"
+                    placeholder={tr("First name")}
                     className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   />
                   <input
                     value={lastName}
                     onChange={(e) => setLastName(e.target.value)}
                     required
-                    placeholder="Last name"
+                    placeholder={tr("Last name")}
                     className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   />
                 </div>
                 <input
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
-                  placeholder="Nickname (optional)"
+                  placeholder={tr("Nickname (optional)")}
                   className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
                 <div className="grid grid-cols-12 gap-2">
                   <input
                     value={street}
                     onChange={(e) => setStreet(e.target.value)}
-                    placeholder="Street"
+                    placeholder={tr("Street")}
                     className="col-span-6 w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   />
                   <input
                     value={streetNumber}
                     onChange={(e) => setStreetNumber(e.target.value)}
-                    placeholder="Number"
+                    placeholder={tr("Number")}
                     className="col-span-3 w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   />
                   <input
                     value={floor}
                     onChange={(e) => setFloor(e.target.value)}
-                    placeholder="Floor"
+                    placeholder={tr("Floor")}
                     className="col-span-3 w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   />
                   <input
                     value={zipCode}
                     onChange={(e) => setZipCode(e.target.value)}
-                    placeholder="ZIP code"
+                    placeholder={tr("ZIP code")}
                     className="col-span-4 w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   />
                   <input
                     value={city}
                     onChange={(e) => setCity(e.target.value)}
-                    placeholder="City"
+                    placeholder={tr("City")}
                     className="col-span-8 w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   />
                   <CountrySelect
@@ -492,7 +481,7 @@ function AuthPage() {
                 <input
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
-                  placeholder={dial ? `${dial} 555 000 0000` : "Phone number"}
+                  placeholder={dial ? `${dial} 555 000 0000` : tr("Phone number")}
                   className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 />
                 <div className="grid grid-cols-2 gap-2">
@@ -520,10 +509,8 @@ function AuthPage() {
                       className="mt-0.5"
                     />
                     <span>
-                      <strong className="block font-medium">Publicly visible</strong>
-                      <span className="text-muted-foreground">
-                        Show my profile in the handyman directory.
-                      </span>
+                      <strong className="block font-medium">{tr("Publicly visible")}</strong>
+                      <span className="text-muted-foreground">{tr("Show my profile in the handyman directory.")}</span>
                     </span>
                   </label>
                 )}
@@ -534,7 +521,7 @@ function AuthPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              placeholder="you@example.com"
+              placeholder={tr("you@example.com")}
               className="w-full rounded-md border border-input bg-background px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
             />
             <div className="relative">
@@ -544,7 +531,7 @@ function AuthPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 minLength={6}
-                placeholder="Password"
+                placeholder={tr("Password")}
                 className="w-full rounded-md border border-input bg-background px-3 py-2.5 pr-10 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
               />
               <button
@@ -552,7 +539,7 @@ function AuthPage() {
                 onClick={() => setShowPassword((s) => !s)}
                 className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground"
                 tabIndex={-1}
-                aria-label={showPassword ? "Hide password" : "Show password"}
+                aria-label={showPassword ? tr("Hide password") : tr("Show password")}
               >
                 {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
               </button>
@@ -563,9 +550,7 @@ function AuthPage() {
                   type="button"
                   onClick={() => setMode("forgot")}
                   className="text-xs font-medium text-primary hover:underline"
-                >
-                  Forgot password?
-                </button>
+                >{tr("Forgot password?")}</button>
               </div>
             )}
             <button
@@ -574,32 +559,29 @@ function AuthPage() {
               className="inline-flex w-full items-center justify-center gap-2 rounded-md bg-primary px-4 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-60"
             >
               {busy && <Loader2 className="size-4 animate-spin" />}
-              {mode === "signin" ? "Sign in" : "Create account"}
+              {mode === "signin" ? tr("Sign in") : tr("Create account")}
             </button>
           </form>
         )}
 
         <p className="mt-6 text-sm text-muted-foreground">
           {mode === "forgot" ? (
-            <>
-              Remember your password?{" "}
+            <>{tr("Remember your password?")}{" "}{" "}
               <button
                 type="button"
                 className="font-medium text-primary hover:underline"
                 onClick={() => setMode("signin")}
-              >
-                Sign in
-              </button>
+              >{tr("Sign in")}</button>
             </>
           ) : (
             <>
-              {mode === "signin" ? "New to HandyFlow?" : "Already have an account?"}{" "}
+              {mode === "signin" ? tr("New to HandyFlow?") : tr("Already have an account?")}{" "}
               <button
                 type="button"
                 className="font-medium text-primary hover:underline"
                 onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
               >
-                {mode === "signin" ? "Create an account" : "Sign in"}
+                {mode === "signin" ? tr("Create an account") : tr("Sign in")}
               </button>
             </>
           )}
@@ -609,12 +591,12 @@ function AuthPage() {
           <div className="mt-6 overflow-hidden rounded-xl border border-input bg-card shadow-card">
             <div className="flex items-center gap-2 border-b border-input px-4 py-3 text-sm font-medium">
               <MapPin className="size-4 text-primary" />
-              {locating ? "Locating address…" : "Your location"}
+              {locating ? tr("Locating address…") : tr("Your location")}
             </div>
             {geo ? (
               <>
                 <iframe
-                  title="Map of your address"
+                  title={tr("Map of your address")}
                   src={mapEmbedUrl(geo.latitude, geo.longitude)}
                   className="h-56 w-full border-0"
                   loading="lazy"
@@ -628,8 +610,7 @@ function AuthPage() {
               </>
             ) : (
               <div className="flex h-56 items-center justify-center text-sm text-muted-foreground">
-                <Loader2 className="mr-2 size-4 animate-spin" /> Finding your address…
-              </div>
+                <Loader2 className="mr-2 size-4 animate-spin" />{tr("Finding your address…")}</div>
             )}
           </div>
         )}

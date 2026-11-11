@@ -1,3 +1,4 @@
+import { useI18n } from "@/lib/i18n";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -13,6 +14,7 @@ const statuses: Record<string, { label: string; tone: string }> = {
 };
 
 export function YourRequests() {
+  const { t: tr, locale } = useI18n();
   const [userId, setUserId] = useState<string | null>(null);
   useEffect(() => {
     // INITIAL_SESSION restores the remembered Supabase session. Never cache
@@ -46,18 +48,14 @@ export function YourRequests() {
 
   if (userId && isPending) {
     return (
-      <p role="status" className="text-sm text-muted-foreground">
-        Loading your requests…
-      </p>
+      <p role="status" className="text-sm text-muted-foreground">{tr("Loading your requests…")}</p>
     );
   }
 
   if (userId && !isError && requests?.length) {
     return (
       <div>
-        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Your requests
-        </p>
+        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{tr("Your requests")}</p>
         <div className="mt-4 space-y-3">
           {requests.map((request) => {
             const status = statuses[request.status] ?? {
@@ -82,9 +80,7 @@ export function YourRequests() {
             );
           })}
         </div>
-        <Link to="/dashboard" className="mt-4 inline-block text-sm font-semibold text-brand">
-          View all your requests →
-        </Link>
+        <Link to="/dashboard" className="mt-4 inline-block text-sm font-semibold text-brand">{tr("View all your requests →")}</Link>
       </div>
     );
   }
@@ -92,38 +88,20 @@ export function YourRequests() {
   return (
     <div>
       {userId && isError && (
-        <p role="status" className="mb-4 text-sm text-muted-foreground">
-          Your requests couldn’t be loaded right now.
-        </p>
+        <p role="status" className="mb-4 text-sm text-muted-foreground">{tr("Your requests couldn’t be loaded right now.")}</p>
       )}
-      <p className="text-xs font-semibold uppercase tracking-wider text-brand">
-        Small jobs deserve a helping hand
-      </p>
-      <h3 className="mt-3 text-xl font-semibold tracking-tight text-foreground">
-        A small repair shouldn’t be a big challenge.
-      </h3>
-      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-        Big renovations often get the attention. But what if you just need an outdoor pipe replaced,
-        a shelf fixed to the wall, or a small leak sorted out? Finding someone for a little job can
-        be surprisingly difficult.
-      </p>
-      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-        HandyFlow helps you find a handyman in your neighbourhood who’s happy to help with the
-        everyday repairs. Post what you need, connect with someone nearby, and get that small job
-        off your list.
-      </p>
+      <p className="text-xs font-semibold uppercase tracking-wider text-brand">{tr("Small jobs deserve a helping hand")}</p>
+      <h3 className="mt-3 text-xl font-semibold tracking-tight text-foreground">{tr("A small repair shouldn’t be a big challenge.")}</h3>
+      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{tr("Big renovations often get the attention. But what if you just need an outdoor pipe replaced, a shelf fixed to the wall, or a small leak sorted out? Finding someone for a little job can be surprisingly difficult.")}</p>
+      <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{tr("HandyFlow helps you find a handyman in your neighbourhood who’s happy to help with the everyday repairs. Post what you need, connect with someone nearby, and get that small job off your list.")}</p>
       {userId ? (
-        <Link to="/dashboard" className="mt-4 inline-block text-sm font-semibold text-brand">
-          Go to your workspace →
-        </Link>
+        <Link to="/dashboard" className="mt-4 inline-block text-sm font-semibold text-brand">{tr("Go to your workspace →")}</Link>
       ) : (
         <Link
           to="/auth"
           search={{ mode: "signup" }}
           className="mt-4 inline-block text-sm font-semibold text-brand"
-        >
-          Find help nearby →
-        </Link>
+        >{tr("Find help nearby →")}</Link>
       )}
     </div>
   );

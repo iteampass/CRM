@@ -1,3 +1,4 @@
+import { useI18n } from "@/lib/i18n";
 import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Check } from "lucide-react";
@@ -108,6 +109,7 @@ const plans: Plan[] = [
 ];
 
 function PricingPage() {
+  const { t: tr, locale } = useI18n();
   const [billing, setBilling] = useState<Billing>("yearly");
 
   return (
@@ -115,14 +117,9 @@ function PricingPage() {
       <LandingHeader />
       <main>
         <section className="mx-auto max-w-6xl px-5 py-20 text-center">
-          <p className="text-sm font-semibold uppercase tracking-wider text-brand">Pricing</p>
-          <h1 className="mx-auto mt-3 max-w-2xl text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-            Fair pricing for both sides of the job
-          </h1>
-          <p className="mx-auto mt-4 max-w-xl text-base text-muted-foreground">
-            Homeowners never pay to use HandyFlow. Handymen start free with the Beginner plan
-            — take up to 5 jobs per month, no commission on the work you win.
-          </p>
+          <p className="text-sm font-semibold uppercase tracking-wider text-brand">{tr("Pricing")}</p>
+          <h1 className="mx-auto mt-3 max-w-2xl text-4xl font-bold tracking-tight text-foreground sm:text-5xl">{tr("Fair pricing for both sides of the job")}</h1>
+          <p className="mx-auto mt-4 max-w-xl text-base text-muted-foreground">{tr("Homeowners never pay to use HandyFlow. Handymen start free with the Beginner plan — take up to 5 jobs per month, no commission on the work you win.")}</p>
 
           {/* Billing toggle — hidden while only free plans are shown. Re-enable when Handyman Pro / Team return.
           <div className="mt-8 inline-flex items-center rounded-full border border-border bg-surface p-1">
@@ -165,23 +162,21 @@ function PricingPage() {
                   }`}
                 >
                   {p.featured && (
-                    <span className="mb-3 inline-flex w-fit rounded-full bg-brand-soft px-3 py-1 text-xs font-semibold text-brand">
-                      Most popular
-                    </span>
+                    <span className="mb-3 inline-flex w-fit rounded-full bg-brand-soft px-3 py-1 text-xs font-semibold text-brand">{tr("Most popular")}</span>
                   )}
-                  <h2 className="text-lg font-semibold text-foreground">{p.name}</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">{p.blurb}</p>
+                  <h2 className="text-lg font-semibold text-foreground">{tr(p.name)}</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">{tr(p.blurb)}</p>
                   <p className="mt-6 flex items-baseline gap-2">
                     <span className="text-4xl font-bold tracking-tight text-foreground transition-colors group-hover:text-brand">
-                      {priceVal}
+                      {tr(priceVal)}
                     </span>
-                    <span className="text-sm text-muted-foreground">{noteVal}</span>
+                    <span className="text-sm text-muted-foreground">{tr(noteVal)}</span>
                   </p>
                   <ul className="mt-6 flex-1 space-y-3">
                     {p.features.map((f) => (
                       <li key={f} className="flex gap-2.5 text-sm text-muted-foreground">
                         <Check className="mt-0.5 size-4 shrink-0 text-success" />
-                        {f}
+                        {tr(f)}
                       </li>
                     ))}
                   </ul>
@@ -192,7 +187,7 @@ function PricingPage() {
                         : "border border-border text-foreground group-hover:bg-accent"
                     }`}
                   >
-                    {p.cta}
+                    {tr(p.cta)}
                   </span>
                 </Link>
               );

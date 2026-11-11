@@ -1,3 +1,4 @@
+import { useI18n } from "@/lib/i18n";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -72,6 +73,7 @@ function Landing() {
 /* ---------------------------------- hero --------------------------------- */
 
 function Hero() {
+  const { t: tr, locale } = useI18n();
   return (
     <section className="relative overflow-hidden">
       <div
@@ -81,34 +83,23 @@ function Hero() {
       <div className="relative mx-auto grid max-w-6xl gap-14 px-5 py-20 lg:grid-cols-2 lg:items-center lg:py-28">
         <div className="animate-enter">
           <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground">
-            <BadgeCheck className="size-3.5 text-brand" />
-            Vetted local professionals in your area
-          </span>
-          <h1 className="mt-5 text-4xl font-bold leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-6xl">
-            Get Home Repairs Done.
-            <br />
-            <span className="text-brand">Without the Hassle.</span>
+            <BadgeCheck className="size-3.5 text-brand" />{tr("Vetted local professionals in your area")}</span>
+          <h1 className="mt-5 text-4xl font-bold leading-[1.08] tracking-tight text-foreground sm:text-5xl lg:text-6xl">{tr("Get Home Repairs Done.")}<br />
+            <span className="text-brand">{tr("Without the Hassle.")}</span>
           </h1>
-          <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-            HandyFlow helps you find skilled local handymen, request the work you need, agree on price and timing, and
-            track the job from first message to final handshake all in one place.
-          </p>
+          <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">{tr("HandyFlow helps you find skilled local handymen, request the work you need, agree on price and timing, and track the job from first message to final handshake all in one place.")}</p>
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Link
               to="/auth"
               search={{ mode: "signup" }}
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground shadow-card transition-all hover:brightness-110 hover:shadow-card-hover"
-            >
-              Find a Handyman
-              <ArrowRight className="size-4" />
+            >{tr("Find a Handyman")}<ArrowRight className="size-4" />
             </Link>
             <Link
               to="/auth"
               search={{ mode: "signup", role: "handyman" }}
               className="inline-flex items-center justify-center rounded-xl border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground transition-colors hover:bg-accent"
-            >
-              Become a Handyman
-            </Link>
+            >{tr("Become a Handyman")}</Link>
           </div>
           <dl className="mt-10 grid max-w-md grid-cols-3 gap-6">
             {[
@@ -118,7 +109,7 @@ function Hero() {
             ].map(([v, l]) => (
               <div key={l}>
                 <dt className="text-2xl font-bold tracking-tight text-foreground">{v}</dt>
-                <dd className="mt-1 text-xs text-muted-foreground">{l}</dd>
+                <dd className="mt-1 text-xs text-muted-foreground">{tr(l)}</dd>
               </div>
             ))}
           </dl>
@@ -158,6 +149,7 @@ const trustItems = [
 ];
 
 function TrustSection() {
+ const { t: tr } = useI18n();
   return (
     <section className="border-y border-border bg-card/60">
       <div className="mx-auto max-w-6xl px-5 py-20">
@@ -167,8 +159,8 @@ function TrustSection() {
               <span className="inline-flex size-10 items-center justify-center rounded-xl bg-brand-soft text-brand">
                 <Icon className="size-5" />
               </span>
-              <h3 className="mt-4 text-sm font-semibold text-foreground">{title}</h3>
-              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{copy}</p>
+              <h3 className="mt-4 text-sm font-semibold text-foreground">{tr(title)}</h3>
+              <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{tr(copy)}</p>
             </div>
           ))}
         </div>
@@ -199,6 +191,7 @@ const steps = [
 ];
 
 function HowItWorks() {
+  const { t: tr, locale } = useI18n();
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const dragRef = useRef<{ startX: number; moved: boolean } | null>(null);
@@ -218,7 +211,7 @@ function HowItWorks() {
       <div className="mx-auto max-w-6xl px-5 py-24">
         <SectionHeading
           eyebrow="How It Works"
-          title="Four steps from broken to fixed"
+          title={tr("Four steps from broken to fixed")}
           copy="No phone tag, no vague quotes, no chasing anyone down. HandyFlow keeps the whole job in one clear flow."
         />
         <ol
@@ -263,8 +256,8 @@ function HowItWorks() {
               <span className="how-num inline-flex size-9 items-center justify-center rounded-xl bg-foreground text-sm font-semibold text-background">
                 {i + 1}
               </span>
-              <h3 className="mt-4 text-base font-semibold text-foreground">{s.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.copy}</p>
+              <h3 className="mt-4 text-base font-semibold text-foreground">{tr(s.title)}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{tr(s.copy)}</p>
             </li>
           ))}
         </ol>
@@ -288,12 +281,13 @@ const services = [
 ];
 
 function Services() {
+  const { t: tr, locale } = useI18n();
   return (
     <section id="services" className="scroll-mt-20 border-y border-border bg-card/60">
       <div className="mx-auto max-w-6xl px-5 py-24">
         <SectionHeading
           eyebrow="Services"
-          title="Whatever the house throws at you"
+          title={tr("Whatever the house throws at you")}
           copy="From a dripping tap to a fitted bookshelf, HandyFlow covers the everyday work that keeps a home running."
         />
         <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -308,8 +302,8 @@ function Services() {
                 <Icon className="size-5" />
               </span>
               <span>
-                <span className="block text-sm font-semibold text-foreground">{name}</span>
-                <span className="mt-1 block text-sm text-muted-foreground">{copy}</span>
+                <span className="block text-sm font-semibold text-foreground">{tr(name)}</span>
+                <span className="mt-1 block text-sm text-muted-foreground">{tr(copy)}</span>
               </span>
             </Link>
           ))}
@@ -322,18 +316,14 @@ function Services() {
 /* ------------------------------ for clients ------------------------------- */
 
 function ForClients() {
+  const { t: tr, locale } = useI18n();
   return (
     <section id="for-clients" className="scroll-mt-20">
       <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] gap-14 px-5 py-24 lg:grid-cols-2 lg:items-center">
         <div className="min-w-0">
-          <p className="text-sm font-semibold uppercase tracking-wider text-brand">For clients</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Finding a good handyman shouldn’t take three phone calls
-          </h2>
-          <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-            Post one request and let qualified professionals near you come to it. You stay in control of price, timing
-            and who does the work.
-          </p>
+          <p className="text-sm font-semibold uppercase tracking-wider text-brand">{tr("For clients")}</p>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">{tr("Finding a good handyman shouldn’t take three phone calls")}</h2>
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground">{tr("Post one request and let qualified professionals near you come to it. You stay in control of price, timing and who does the work.")}</p>
           <ul className="mt-8 space-y-4">
             {[
               ["One request, several offers", "Compare price and availability side by side."],
@@ -344,8 +334,8 @@ function ForClients() {
               <li key={t} className="flex gap-3">
                 <BadgeCheck className="mt-0.5 size-5 shrink-0 text-brand" />
                 <span>
-                  <span className="block text-sm font-semibold text-foreground">{t}</span>
-                  <span className="mt-0.5 block text-sm text-muted-foreground">{c}</span>
+                  <span className="block text-sm font-semibold text-foreground">{tr(t)}</span>
+                  <span className="mt-0.5 block text-sm text-muted-foreground">{tr(c)}</span>
                 </span>
               </li>
             ))}
@@ -354,16 +344,14 @@ function ForClients() {
             to="/auth"
             search={{ mode: "signup" }}
             className="mt-9 inline-flex items-center gap-2 rounded-xl bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground transition-all hover:brightness-110"
-          >
-            Post Your First Request
-            <ArrowRight className="size-4" />
+          >{tr("Post Your First Request")}<ArrowRight className="size-4" />
           </Link>
         </div>
 
         <div className="surface-card min-w-0 p-6">
           <img
             src={painterImage}
-            alt="Professional painter refreshing a living room wall with a paint roller"
+            alt={tr("Professional painter refreshing a living room wall with a paint roller")}
             width={1448}
             height={1086}
             loading="lazy"
@@ -380,6 +368,7 @@ function ForClients() {
 /* ----------------------------- for handymen ------------------------------- */
 
 function ForHandymen() {
+  const { t: tr, locale } = useI18n();
   return (
     <section id="for-handymen" className="scroll-mt-20 border-y border-border bg-card/60">
       <div className="mx-auto grid max-w-6xl grid-cols-[minmax(0,1fr)] gap-14 px-5 py-24 lg:grid-cols-2 lg:items-center">
@@ -402,21 +391,14 @@ function ForHandymen() {
         </div>
 
         <div className="order-1 min-w-0 lg:order-2">
-          <p className="text-sm font-semibold uppercase tracking-wider text-brand">For handymen</p>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-            Spend less time chasing work, more time doing it
-          </h2>
-          <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-            HandyFlow puts local jobs in front of you the moment they’re posted. Take a request, agree the terms with
-            the client, and build a public profile that earns you the next one.
-          </p>
+          <p className="text-sm font-semibold uppercase tracking-wider text-brand">{tr("For handymen")}</p>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">{tr("Spend less time chasing work, more time doing it")}</h2>
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground">{tr("HandyFlow puts local jobs in front of you the moment they’re posted. Take a request, agree the terms with the client, and build a public profile that earns you the next one.")}</p>
           <Link
             to="/auth"
             search={{ mode: "signup", role: "handyman" }}
             className="mt-9 inline-flex items-center gap-2 rounded-xl bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground transition-all hover:brightness-110"
-          >
-            Join as a Handyman
-            <ArrowRight className="size-4" />
+          >{tr("Join as a Handyman")}<ArrowRight className="size-4" />
           </Link>
         </div>
       </div>
@@ -427,6 +409,7 @@ function ForHandymen() {
 /* ------------------------------ testimonials ------------------------------ */
 
 function Testimonials() {
+  const { t: tr, locale } = useI18n();
   const fetchTestimonials = useServerFn(getPublicTestimonials);
   const { data } = useQuery({
     queryKey: ["public-testimonials"],
@@ -440,7 +423,7 @@ function Testimonials() {
       <div className="mx-auto max-w-6xl px-5 py-24">
         <SectionHeading
           eyebrow="Testimonials"
-          title="Homeowners and pros who stopped guessing"
+          title={tr("Homeowners and pros who stopped guessing")}
           copy="Real work, tracked end to end. Here’s what people say after their first job on HandyFlow."
         />
         <div className="mt-14 grid gap-6 lg:grid-cols-3">
@@ -468,31 +451,24 @@ function Testimonials() {
 /* -------------------------------- final CTA ------------------------------- */
 
 function FinalCta() {
+  const { t: tr, locale } = useI18n();
   return (
     <section className="px-5 pb-24">
       <div className="mx-auto max-w-6xl overflow-hidden rounded-3xl bg-foreground px-6 py-16 text-center sm:px-12">
-        <h2 className="mx-auto max-w-2xl text-3xl font-bold tracking-tight text-background sm:text-4xl">
-          Start your first repair request today
-        </h2>
-        <p className="mx-auto mt-4 max-w-xl text-base text-background/70">
-          It takes a minute to post a job — and you’ll hear from local handymen who are ready to help.
-        </p>
+        <h2 className="mx-auto max-w-2xl text-3xl font-bold tracking-tight text-background sm:text-4xl">{tr("Start your first repair request today")}</h2>
+        <p className="mx-auto mt-4 max-w-xl text-base text-background/70">{tr("It takes a minute to post a job — and you’ll hear from local handymen who are ready to help.")}</p>
         <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
           <Link
             to="/auth"
             search={{ mode: "signup" }}
             className="inline-flex items-center justify-center gap-2 rounded-xl bg-brand px-6 py-3 text-sm font-semibold text-brand-foreground transition-all hover:brightness-110"
-          >
-            Find a Handyman
-            <ArrowRight className="size-4" />
+          >{tr("Find a Handyman")}<ArrowRight className="size-4" />
           </Link>
           <Link
             to="/auth"
             search={{ mode: "signup", role: "handyman" }}
             className="inline-flex items-center justify-center rounded-xl border border-background/25 px-6 py-3 text-sm font-semibold text-background transition-colors hover:bg-background/10"
-          >
-            Become a Handyman
-          </Link>
+          >{tr("Become a Handyman")}</Link>
         </div>
       </div>
     </section>
@@ -502,11 +478,12 @@ function FinalCta() {
 /* --------------------------------- shared --------------------------------- */
 
 function SectionHeading({ eyebrow, title, copy }: { eyebrow: string; title: string; copy: string }) {
+ const { t: tr } = useI18n();
   return (
     <div className="mx-auto max-w-2xl text-center">
-      <p className="text-sm font-semibold uppercase tracking-wider text-brand">{eyebrow}</p>
-      <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">{title}</h2>
-      <p className="mt-4 text-base leading-relaxed text-muted-foreground">{copy}</p>
+      <p className="text-sm font-semibold uppercase tracking-wider text-brand">{tr(eyebrow)}</p>
+      <h2 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">{tr(title)}</h2>
+      <p className="mt-4 text-base leading-relaxed text-muted-foreground">{tr(copy)}</p>
     </div>
   );
 }

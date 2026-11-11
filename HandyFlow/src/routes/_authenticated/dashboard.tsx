@@ -1,3 +1,4 @@
+import { useI18n } from "@/lib/i18n";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -29,6 +30,7 @@ export const Route = createFileRoute("/_authenticated/dashboard")({
 });
 
 function DashboardPage() {
+  const { t: tr, locale } = useI18n();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const fetchWorkspace = useServerFn(getWorkspaceData);
@@ -47,7 +49,7 @@ function DashboardPage() {
       navigate({ to: "/auth", replace: true });
     } catch (err) {
       console.error("Sign out failed:", err);
-      toast.error("Couldn't sign you out. Please try again.");
+      toast.error(tr("Couldn't sign you out. Please try again."));
     }
   }
 
@@ -63,13 +65,13 @@ function DashboardPage() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background px-4 text-center">
         <div>
-          <h1 className="text-lg font-semibold">We couldn't load your workspace</h1>
-          <p className="mt-2 text-sm text-muted-foreground">We couldn’t retrieve your account’s requests. Try again or sign out and sign back in.</p>
+          <h1 className="text-lg font-semibold">{tr("We couldn't load your workspace")}</h1>
+          <p className="mt-2 text-sm text-muted-foreground">{tr("We couldn’t retrieve your account’s requests. Try again or sign out and sign back in.")}</p>
           <div className="mt-4 flex justify-center gap-3">
             <button type="button" className="primary-button" disabled={isFetching} onClick={() => void refetch()}>
-              {isFetching ? "Retrying…" : "Try again"}
+              {isFetching ? tr("Retrying…") : tr("Try again")}
             </button>
-            <button type="button" className="outline-button" onClick={() => void handleSignOut()}>Sign out</button>
+            <button type="button" className="outline-button" onClick={() => void handleSignOut()}>{tr("Sign out")}</button>
           </div>
         </div>
       </div>

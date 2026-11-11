@@ -1,3 +1,4 @@
+import { useI18n } from "@/lib/i18n";
 import { arrivalProposalMode } from "@/lib/arrival-proposal";
 import { RequestActivityLog } from "./RequestActivityLog";
 import { ClientContact } from "./ClientContact";
@@ -42,6 +43,7 @@ export function TakeRequestDialog({
   role: 'client' | 'handyman' | 'admin'
   onClose: () => void
 }) {
+  const { t: tr, locale } = useI18n();
   const queryClient = useQueryClient()
   const take = useServerFn(takeTaskRequest)
   const advance = useServerFn(advanceTaskStatus)
@@ -84,16 +86,16 @@ export function TakeRequestDialog({
       })
       await refresh()
       toast.success(
-        res.asked === 'email'
+        tr(res.asked === 'email'
           ? `Invitation sent to ${res.name}`
-          : `${res.name} was asked to take this request`,
+          : `${res.name} was asked to take this request`),
       )
       setAskOpen(false)
       setAskHandymanId('')
       setAskEmail('')
       setAskMessage('')
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not ask the handyman')
+      toast.error(tr(err instanceof Error ? err.message : 'Could not ask the handyman'))
     } finally {
       setBusy(false)
     }
@@ -144,13 +146,13 @@ export function TakeRequestDialog({
       }
       await refresh()
       toast.success(
-        res.cancelled
+        tr(res.cancelled
           ? 'Request cancelled'
-          : 'Cancellation requested — waiting for the other side to agree',
+          : 'Cancellation requested — waiting for the other side to agree'),
       )
       onClose()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not cancel the request')
+      toast.error(tr(err instanceof Error ? err.message : 'Could not cancel the request'))
       setBusy(false)
     }
   }
@@ -166,13 +168,13 @@ export function TakeRequestDialog({
       }
       await refresh()
       toast.success(
-        res.pending
+        tr(res.pending
           ? (initialArrival ? 'Arrival proposed — waiting for the client to accept' : 'Postpone requested — waiting for the client to accept')
-          : 'Request postponed',
+          : 'Request postponed'),
       )
       onClose()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not postpone the request')
+      toast.error(tr(err instanceof Error ? err.message : 'Could not postpone the request'))
       setBusy(false)
     }
   }
@@ -183,10 +185,10 @@ export function TakeRequestDialog({
     try {
       await respondPostpone({ data: { taskId: request.id, accept } })
       await refresh()
-      toast.success(accept ? 'Arrival date and time accepted' : 'Arrival proposal declined')
+      toast.success(tr(accept ? 'Arrival date and time accepted' : 'Arrival proposal declined'))
       onClose()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not answer the postpone request')
+      toast.error(tr(err instanceof Error ? err.message : 'Could not answer the postpone request'))
       setBusy(false)
     }
   }
@@ -196,10 +198,10 @@ export function TakeRequestDialog({
     try {
       await reportNoShow({ data: { taskId: request.id } })
       await refresh()
-      toast.success('Reported — the request is open for handymen again')
+      toast.success(tr('Reported — the request is open for handymen again'))
       onClose()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not report the no-show')
+      toast.error(tr(err instanceof Error ? err.message : 'Could not report the no-show'))
       setBusy(false)
     }
   }
@@ -209,10 +211,10 @@ export function TakeRequestDialog({
     try {
       await take({ data: { taskId: request.id } })
       await refresh()
-      toast.success('Request taken — you can now make an offer')
+      toast.success(tr('Request taken — you can now make an offer'))
       onClose()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not take this request')
+      toast.error(tr(err instanceof Error ? err.message : 'Could not take this request'))
       setBusy(false)
     }
   }
@@ -223,10 +225,10 @@ export function TakeRequestDialog({
     try {
       await offer({ data: { taskId: request.id, price: Number(price), message } })
       await refresh()
-      toast.success('Offer sent to the client')
+      toast.success(tr('Offer sent to the client'))
       onClose()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not send the offer')
+      toast.error(tr(err instanceof Error ? err.message : 'Could not send the offer'))
       setBusy(false)
     }
   }
@@ -236,10 +238,10 @@ export function TakeRequestDialog({
     try {
       await accept({ data: { offerId } })
       await refresh()
-      toast.success('Offer accepted — request agreed')
+      toast.success(tr('Offer accepted — request agreed'))
       onClose()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not accept the offer')
+      toast.error(tr(err instanceof Error ? err.message : 'Could not accept the offer'))
       setBusy(false)
     }
   }
@@ -250,11 +252,11 @@ export function TakeRequestDialog({
       await reject({ data: { offerId, mode } })
       await refresh()
       toast.success(
-        mode === 'another' ? 'Asked the handyman for another offer' : 'Offer declined',
+        tr(mode === 'another' ? 'Asked the handyman for another offer' : 'Offer declined'),
       )
       onClose()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not update the offer')
+      toast.error(tr(err instanceof Error ? err.message : 'Could not update the offer'))
       setBusy(false)
     }
   }
@@ -264,10 +266,10 @@ export function TakeRequestDialog({
     try {
       await withdraw({ data: { offerId } })
       await refresh()
-      toast.success('Offer withdrawn — the request is open again')
+      toast.success(tr('Offer withdrawn — the request is open again'))
       onClose()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not withdraw the offer')
+      toast.error(tr(err instanceof Error ? err.message : 'Could not withdraw the offer'))
       setBusy(false)
     }
   }
@@ -281,7 +283,7 @@ export function TakeRequestDialog({
       toast.success(`Status set to ${STATUS_LABELS[next]}`)
       onClose()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not update the status')
+      toast.error(tr(err instanceof Error ? err.message : 'Could not update the status'))
       setBusy(false)
     }
   }
@@ -299,30 +301,30 @@ export function TakeRequestDialog({
               {request.client} · {request.category}
             </p>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close" className="rounded-md p-1 hover:bg-accent">
+          <button type="button" onClick={onClose} aria-label={tr("Close")} className="rounded-md p-1 hover:bg-accent">
             <X className="size-4" />
           </button>
         </div>
 
         <dl className="mt-5 grid grid-cols-2 gap-4 text-sm">
           <div>
-            <dt className="text-muted-foreground">Status</dt>
-            <dd className="font-medium">{STATUS_LABELS[status] ?? status}</dd>
+            <dt className="text-muted-foreground">{tr("Status")}</dt>
+            <dd className="font-medium">{tr(STATUS_LABELS[status] ?? status)}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">Priority</dt>
+            <dt className="text-muted-foreground">{tr("Priority")}</dt>
             <dd className="font-medium">{request.priority}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">Location</dt>
+            <dt className="text-muted-foreground">{tr("Location")}</dt>
             <dd className="font-medium">{request.location}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">Preferred date</dt>
+            <dt className="text-muted-foreground">{tr("Preferred date")}</dt>
             <dd className="font-medium">{request.deadline}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">{request.postponeRequested ? 'Proposed arrival · awaiting client approval' : request.postponedTo ? 'Agreed arrival' : 'Requested arrival'}</dt>
+            <dt className="text-muted-foreground">{request.postponeRequested ? tr("Proposed arrival · awaiting client approval") : request.postponedTo ? tr("Agreed arrival") : tr("Requested arrival")}</dt>
             <dd className="font-medium">
               {request.postponeRequested
                 ? `${request.postponeRequestedDate ?? 'Date not set'} ${request.postponeRequestedTime?.slice(0, 5) ?? ''}`
@@ -330,18 +332,18 @@ export function TakeRequestDialog({
             </dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">Budget</dt>
+            <dt className="text-muted-foreground">{tr("Budget")}</dt>
             <dd className="font-medium">{request.budget}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">Country</dt>
+            <dt className="text-muted-foreground">{tr("Country")}</dt>
             <dd className="font-medium">{request.clientCountry || '—'}</dd>
           </div>
         </dl>
 
         {request.description && (
           <>
-            <h3 className="mt-5 text-sm font-medium">Description</h3>
+            <h3 className="mt-5 text-sm font-medium">{tr("Description")}</h3>
             <p className="mt-1 whitespace-pre-line text-sm text-muted-foreground">{request.description}</p>
           </>
         )}
@@ -352,20 +354,17 @@ export function TakeRequestDialog({
         {!isClient && !request.assigned && (
           <div className="mt-5 flex flex-wrap gap-2 border-t border-border pt-5">
             <button type="button" onClick={() => void handleTake()} disabled={busy} className={primaryCls}>
-              {busy && <Loader2 className="size-4 animate-spin" />}
-              Take request
-            </button>
+              {busy && <Loader2 className="size-4 animate-spin" />}{" "}{tr("Take request")}</button>
           </div>
         )}
 
         {/* Handyman: offer sent, waiting for the client → withdraw */}
         {!isClient && request.takenByMe && myPendingOffer && (
           <div className="mt-5 border-t border-border pt-5">
-            <h3 className="text-sm font-medium">Your offer</h3>
+            <h3 className="text-sm font-medium">{tr("Your offer")}</h3>
             <p className="mt-1 text-sm text-muted-foreground">
               ${myPendingOffer.price}
-              {myPendingOffer.message ? ` · ${myPendingOffer.message}` : ''} — waiting for the client
-            </p>
+              {myPendingOffer.message ? ` · ${myPendingOffer.message}` : ''}{tr("— waiting for the client")}</p>
             <div className="mt-4 flex justify-end">
               <button
                 type="button"
@@ -373,9 +372,7 @@ export function TakeRequestDialog({
                 disabled={busy}
                 className={secondaryCls}
               >
-                {busy && <Loader2 className="size-4 animate-spin" />}
-                Withdraw offer
-              </button>
+                {busy && <Loader2 className="size-4 animate-spin" />}{" "}{tr("Withdraw offer")}</button>
             </div>
           </div>
         )}
@@ -384,10 +381,10 @@ export function TakeRequestDialog({
         {!isClient && request.takenByMe && !myPendingOffer && beforeAgreement && (
 
           <form onSubmit={handleOffer} className="mt-5 border-t border-border pt-5">
-            <h3 className="text-sm font-medium">Make an offer</h3>
+            <h3 className="text-sm font-medium">{tr("Make an offer")}</h3>
             <div className="mt-2 grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-sm text-muted-foreground">Price ($)</label>
+                <label className="block text-sm text-muted-foreground">{tr("Price ($)")}</label>
                 <input
                   type="number"
                   min="1"
@@ -399,11 +396,11 @@ export function TakeRequestDialog({
                 />
               </div>
               <div>
-                <label className="block text-sm text-muted-foreground">Message</label>
+                <label className="block text-sm text-muted-foreground">{tr("Message")}</label>
                 <input
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
-                  placeholder="I can start tomorrow"
+                  placeholder={tr("I can start tomorrow")}
                   className={inputCls}
                 />
               </div>
@@ -412,7 +409,7 @@ export function TakeRequestDialog({
               <ul className="mt-3 space-y-1 text-sm text-muted-foreground">
                 {request.offers.map((o) => (
                   <li key={o.id}>
-                    ${o.price} — {STATUS_LABELS[o.status] ?? o.status}
+                    ${o.price} — {tr(STATUS_LABELS[o.status] ?? o.status)}
                     {o.message ? ` · ${o.message}` : ''}
                   </li>
                 ))}
@@ -420,9 +417,7 @@ export function TakeRequestDialog({
             )}
             <div className="mt-4 flex justify-end">
               <button type="submit" disabled={busy} className={primaryCls}>
-                {busy && <Loader2 className="size-4 animate-spin" />}
-                Send offer
-              </button>
+                {busy && <Loader2 className="size-4 animate-spin" />}{" "}{tr("Send offer")}</button>
             </div>
           </form>
         )}
@@ -433,22 +428,20 @@ export function TakeRequestDialog({
             {beforeAgreement && (
             <>
             <div className="flex items-center justify-between gap-3">
-              <h3 className="text-sm font-medium">Offers</h3>
+              <h3 className="text-sm font-medium">{tr("Offers")}</h3>
               {!request.assigned && !closed && (
                 <button
                   type="button"
                   onClick={() => setAskOpen((v) => !v)}
                   className={secondaryCls}
                 >
-                  <UserPlus className="size-4" />
-                  Ask a handyman
-                </button>
+                  <UserPlus className="size-4" />{tr("Ask a handyman")}</button>
               )}
             </div>
 
             {askOpen && !request.assigned && !closed && (
               <div className="mt-3 rounded-md border border-border p-3">
-                <label className="block text-sm text-muted-foreground">Choose a handyman</label>
+                <label className="block text-sm text-muted-foreground">{tr("Choose a handyman")}</label>
                 <select
                   value={askHandymanId}
                   onChange={(e) => {
@@ -458,20 +451,18 @@ export function TakeRequestDialog({
                   className={inputCls}
                 >
                   <option value="">
-                    {candidatesQuery.isPending ? 'Loading…' : 'Select from handymen…'}
+                    {candidatesQuery.isPending ? tr("Loading…") : tr("Select from handymen…")}
                   </option>
                   {(candidatesQuery.data ?? []).map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.name} · {c.role}
-                      {c.worked ? ' · worked with you' : ''}
-                      {c.available ? '' : ' · busy'}
+                      {c.worked ? tr(" · worked with you") : ''}
+                      {c.available ? '' : tr(" · busy")}
                     </option>
                   ))}
                 </select>
 
-                <label className="mt-3 block text-sm text-muted-foreground">
-                  Or invite by email
-                </label>
+                <label className="mt-3 block text-sm text-muted-foreground">{tr("Or invite by email")}</label>
                 <input
                   type="email"
                   value={askEmail}
@@ -479,37 +470,33 @@ export function TakeRequestDialog({
                     setAskEmail(e.target.value)
                     if (e.target.value) setAskHandymanId('')
                   }}
-                  placeholder="handyman@example.com"
+                  placeholder={tr("handyman@example.com")}
                   className={inputCls}
                 />
 
-                <label className="mt-3 block text-sm text-muted-foreground">Message (optional)</label>
+                <label className="mt-3 block text-sm text-muted-foreground">{tr("Message (optional)")}</label>
                 <input
                   value={askMessage}
                   onChange={(e) => setAskMessage(e.target.value)}
-                  placeholder="Could you take this job?"
+                  placeholder={tr("Could you take this job?")}
                   className={inputCls}
                 />
 
                 <div className="mt-3 flex justify-end gap-2">
-                  <button type="button" onClick={() => setAskOpen(false)} className={secondaryCls}>
-                    Cancel
-                  </button>
+                  <button type="button" onClick={() => setAskOpen(false)} className={secondaryCls}>{tr("Cancel")}</button>
                   <button
                     type="button"
                     onClick={() => void handleAsk()}
                     disabled={busy || (!askHandymanId && !askEmail.trim())}
                     className={primaryCls}
                   >
-                    {busy && <Loader2 className="size-4 animate-spin" />}
-                    Send request
-                  </button>
+                    {busy && <Loader2 className="size-4 animate-spin" />}{" "}{tr("Send request")}</button>
                 </div>
               </div>
             )}
 
             {request.offers.length === 0 ? (
-              <p className="mt-1 text-sm text-muted-foreground">No offers yet.</p>
+              <p className="mt-1 text-sm text-muted-foreground">{tr("No offers yet.")}</p>
             ) : (
               <ul className="mt-2 space-y-2">
                 {request.offers.map((o) => (
@@ -528,28 +515,22 @@ export function TakeRequestDialog({
                           onClick={() => void handleAccept(o.id)}
                           disabled={busy}
                           className={primaryCls}
-                        >
-                          Accept price offer
-                        </button>
+                        >{tr("Accept price offer")}</button>
                         <button
                           type="button"
                           onClick={() => void handleReject(o.id, 'another')}
                           disabled={busy}
                           className={secondaryCls}
-                        >
-                          Ask for another offer
-                        </button>
+                        >{tr("Ask for another offer")}</button>
                         <button
                           type="button"
                           onClick={() => void handleReject(o.id, 'decline')}
                           disabled={busy}
                           className={secondaryCls}
-                        >
-                          Decline
-                        </button>
+                        >{tr("Decline")}</button>
                       </div>
                     ) : (
-                      <span className="text-muted-foreground">{STATUS_LABELS[o.status] ?? o.status}</span>
+                      <span className="text-muted-foreground">{tr(STATUS_LABELS[o.status] ?? o.status)}</span>
                     )}
 
                   </li>
@@ -561,30 +542,25 @@ export function TakeRequestDialog({
 
             {beforeAgreement && request.postponedTo && request.arrivalTime && (
               <div className="mt-4 rounded-md border border-border p-3">
-                <p className="text-sm font-medium">Arrival accepted: {request.postponedTo} at {request.arrivalTime.slice(0, 5)}</p>
+                <p className="text-sm font-medium">{tr("Arrival accepted:")}{" "}{request.postponedTo}{" "}{tr("at")}{" "}{request.arrivalTime.slice(0, 5)}</p>
                 <p className="mt-1 text-sm text-muted-foreground" id="start-work-requirement">
                   {request.offers.some((offer) => offer.status === 'pending')
-                    ? 'Accept a price offer above to confirm the job and enable Start work. Your arrival date and time are already saved.'
-                    : 'The handyman needs to send a new price offer for you to accept. Your arrival date and time are already saved.'}
+                    ? tr("Accept a price offer above to confirm the job and enable Start work. Your arrival date and time are already saved.")
+                    : tr("The handyman needs to send a new price offer for you to accept. Your arrival date and time are already saved.")}
                 </p>
-                <button type="button" disabled aria-describedby="start-work-requirement" className={`${primaryCls} mt-3`}>
-                  Handyman arrived — start work
-                </button>
+                <button type="button" disabled aria-describedby="start-work-requirement" className={`${primaryCls} mt-3`}>{tr("Handyman arrived — start work")}</button>
               </div>
             )}
 
             {status === 'agreed' && (
               <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
                 {arrivalAt && !Number.isNaN(arrivalAt.getTime()) && (
-                  <p className="mr-auto text-sm text-muted-foreground">
-                    Agreed arrival: {arrivalAt.toLocaleString()}
+                  <p className="mr-auto text-sm text-muted-foreground">{tr("Agreed arrival:")}{" "}{arrivalAt.toLocaleString()}
                     {!canReportNoShow && ' · no-show can be reported 30 min later'}
                   </p>
                 )}
                 <button type="button" onClick={() => void handleStatus('in_progress')} disabled={busy} className={primaryCls}>
-                  {busy && <Loader2 className="size-4 animate-spin" />}
-                  Handyman arrived — start work
-                </button>
+                  {busy && <Loader2 className="size-4 animate-spin" />}{tr("Handyman arrived — start work")}</button>
                 {canReportNoShow && (
                   <button
                     type="button"
@@ -592,18 +568,14 @@ export function TakeRequestDialog({
                     disabled={busy}
                     className="inline-flex items-center gap-2 rounded-md bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60"
                   >
-                    {busy && <Loader2 className="size-4 animate-spin" />}
-                    Handyman did not arrive
-                  </button>
+                    {busy && <Loader2 className="size-4 animate-spin" />}{tr("Handyman did not arrive")}</button>
                 )}
               </div>
             )}
             {status === 'in_progress' && (
               <div className="mt-4 flex justify-end">
                 <button type="button" onClick={() => void handleStatus('completed')} disabled={busy} className={primaryCls}>
-                  {busy && <Loader2 className="size-4 animate-spin" />}
-                  Mark completed
-                </button>
+                  {busy && <Loader2 className="size-4 animate-spin" />}{" "}{tr("Mark completed")}</button>
               </div>
             )}
           </div>
@@ -612,9 +584,9 @@ export function TakeRequestDialog({
         {/* Initial arrival proposals are separate from changes to an agreed schedule. */}
         {isParticipant && !closed && (
           <div className="mt-5 border-t border-border pt-5">
-            <h3 className="text-sm font-medium">{initialArrival ? "Propose arrival" : "Arrival schedule"}</h3>
-            {initialArrival && <p className="mt-2 text-sm text-muted-foreground">The handyman proposes an exact date and time. The client must accept it.</p>}
-            {scheduleMode === "waiting" && <p className="mt-2 text-sm text-muted-foreground">Arrival accepted: {request.postponedTo} at {request.arrivalTime?.slice(0, 5)}. {isClient ? "Accept a price offer to confirm the job." : "Send a price offer for the client to accept."}</p>}
+            <h3 className="text-sm font-medium">{initialArrival ? tr("Propose arrival") : tr("Arrival schedule")}</h3>
+            {initialArrival && <p className="mt-2 text-sm text-muted-foreground">{tr("The handyman proposes an exact date and time. The client must accept it.")}</p>}
+            {scheduleMode === "waiting" && <p className="mt-2 text-sm text-muted-foreground">{tr("Arrival accepted:")}{" "}{request.postponedTo}{" "}{tr("at")}{" "}{request.arrivalTime?.slice(0, 5)}. {isClient ? tr("Accept a price offer to confirm the job.") : tr("Send a price offer for the client to accept.")}</p>}
             {request.postponeRequested && (
               <div className="mt-2 rounded-md border border-border p-3 text-sm">
                 <p className="text-muted-foreground">
@@ -631,17 +603,13 @@ export function TakeRequestDialog({
                       disabled={busy}
                       className={primaryCls}
                     >
-                      {busy && <Loader2 className="size-4 animate-spin" />}
-                      Accept date and time
-                    </button>
+                      {busy && <Loader2 className="size-4 animate-spin" />}{" "}{tr("Accept date and time")}</button>
                     <button
                       type="button"
                       onClick={() => void handleRespondPostpone(false)}
                       disabled={busy}
                       className={secondaryCls}
-                    >
-                      Decline
-                    </button>
+                    >{tr("Decline")}</button>
                   </div>
                 )}
               </div>
@@ -649,15 +617,12 @@ export function TakeRequestDialog({
             {request.cancelRequested && (
               <p className="mt-1 text-sm text-muted-foreground">
                 {request.cancelRequestedByMe
-                  ? 'You asked to cancel — waiting for the other side to agree.'
-                  : 'The other side asked to cancel. Confirm to cancel the request.'}
+                  ? tr("You asked to cancel — waiting for the other side to agree.")
+                  : tr("The other side asked to cancel. Confirm to cancel the request.")}
               </p>
             )}
             {!beforeAgreement && !request.cancelRequested && (
-              <p className="mt-1 text-sm text-muted-foreground">
-                The price is agreed — cancelling now needs both sides to agree. Otherwise the
-                request can only be postponed.
-              </p>
+              <p className="mt-1 text-sm text-muted-foreground">{tr("The price is agreed — cancelling now needs both sides to agree. Otherwise the request can only be postponed.")}</p>
             )}
             <div className="mt-3 flex flex-wrap items-end gap-2">
               {request.offers.length > 0 && (canCancelOutright || canRequestCancel) && (
@@ -669,15 +634,15 @@ export function TakeRequestDialog({
                 >
                   {busy && <Loader2 className="size-4 animate-spin" />}
                   {canCancelOutright
-                    ? 'Cancel request'
+                    ? tr("Cancel request")
                     : request.cancelRequested && !request.cancelRequestedByMe
-                      ? 'Agree and cancel'
-                      : 'Request cancellation'}
+                      ? tr("Agree and cancel")
+                      : tr("Request cancellation")}
                 </button>
               )}
               {(scheduleMode === "postpone" || (initialArrival && !isClient)) && <form onSubmit={handlePostpone} className="flex flex-wrap items-end gap-2">
                 <div>
-                  <label className="block text-sm text-muted-foreground">{initialArrival ? "Arrival date" : "Postpone to"}</label>
+                  <label className="block text-sm text-muted-foreground">{initialArrival ? tr("Arrival date") : tr("Postpone to")}</label>
                   <input
                     type="date"
                     value={postponeDate}
@@ -687,7 +652,7 @@ export function TakeRequestDialog({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm text-muted-foreground">Arrival time</label>
+                  <label className="block text-sm text-muted-foreground">{tr("Arrival time")}</label>
                   <input
                     type="time"
                     value={postponeTime}
@@ -697,7 +662,7 @@ export function TakeRequestDialog({
                   />
                 </div>
                 <button type="submit" disabled={busy} className="inline-flex items-center gap-2 rounded-md bg-yellow-400 px-3 py-2 text-sm font-medium text-black hover:bg-yellow-500 disabled:opacity-60">
-                  {initialArrival ? 'Propose arrival' : isClient ? 'Postpone' : 'Ask to postpone'}
+                  {initialArrival ? tr("Propose arrival") : isClient ? tr("Postpone") : tr("Ask to postpone")}
                 </button>
               </form>}
             </div>
@@ -706,7 +671,7 @@ export function TakeRequestDialog({
 
         {/* Negotiation log */}
         <div className="mt-5 border-t border-border pt-5">
-          <h3 className="text-sm font-medium">Activity log</h3>
+          <h3 className="text-sm font-medium">{tr("Activity log")}</h3>
           <RequestActivityLog taskId={request.id} />
         </div>
       </div>

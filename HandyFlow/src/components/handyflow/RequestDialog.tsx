@@ -1,3 +1,4 @@
+import { useI18n } from "@/lib/i18n";
 import { useEffect, useState, type FormEvent } from 'react'
 import { useServerFn } from '@tanstack/react-start'
 import { useQueryClient } from '@tanstack/react-query'
@@ -9,6 +10,7 @@ const inputCls =
   'mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring'
 
 export function RequestDialog({ defaultLocation, onClose }: { defaultLocation: string; onClose: () => void }) {
+  const { t: tr, locale } = useI18n();
   const queryClient = useQueryClient()
   const fetchCategories = useServerFn(getRepairCategories)
   const create = useServerFn(createTaskRequest)
@@ -32,7 +34,7 @@ export function RequestDialog({ defaultLocation, onClose }: { defaultLocation: s
         setCategories(rows)
         if (rows.length && !categoryId) setCategoryId(rows[0]!.id)
       })
-      .catch(() => toast.error('Could not load categories'))
+      .catch(() => toast.error(tr('Could not load categories')))
     return () => {
       cancelled = true
     }
@@ -54,10 +56,10 @@ export function RequestDialog({ defaultLocation, onClose }: { defaultLocation: s
       }
       await create({ data: budgetMax ? { ...payload, budgetMax: Number(budgetMax) } : payload })
       await queryClient.invalidateQueries({ queryKey: ['workspace'] })
-      toast.success('Request created')
+      toast.success(tr('Request created'))
       onClose()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not create the request')
+      toast.error(tr(err instanceof Error ? err.message : 'Could not create the request'))
     } finally {
       setBusy(false)
     }
@@ -72,58 +74,58 @@ export function RequestDialog({ defaultLocation, onClose }: { defaultLocation: s
       >
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-lg font-semibold">New request</h2>
-            <p className="text-sm text-muted-foreground">Describe the job and a handyman will pick it up.</p>
+            <h2 className="text-lg font-semibold">{tr("New request")}</h2>
+            <p className="text-sm text-muted-foreground">{tr("Describe the job and a handyman will pick it up.")}</p>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close" className="rounded-md p-1 hover:bg-accent">
+          <button type="button" onClick={onClose} aria-label={tr("Close")} className="rounded-md p-1 hover:bg-accent">
             <X className="size-4" />
           </button>
         </div>
 
-        <label className="mt-5 block text-sm font-medium">Title</label>
+        <label className="mt-5 block text-sm font-medium">{tr("Title")}</label>
         <input
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           required
-          placeholder="e.g. Fix leaking kitchen sink"
+          placeholder={tr("e.g. Fix leaking kitchen sink")}
           className={inputCls}
         />
 
-        <label className="mt-4 block text-sm font-medium">Category</label>
+        <label className="mt-4 block text-sm font-medium">{tr("Category")}</label>
         <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} required className={inputCls}>
-          {categories.length === 0 && <option value="">Loading…</option>}
+          {categories.length === 0 && <option value="">{tr("Loading…")}</option>}
           {categories.map((c) => (
             <option key={c.id} value={c.id}>
-              {c.name}
+              {tr(c.name)}
             </option>
           ))}
         </select>
 
-        <label className="mt-4 block text-sm font-medium">Description</label>
+        <label className="mt-4 block text-sm font-medium">{tr("Description")}</label>
         <textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
-          placeholder="What needs to be done?"
+          placeholder={tr("What needs to be done?")}
           className={inputCls}
         />
 
-        <label className="mt-4 block text-sm font-medium">Location</label>
+        <label className="mt-4 block text-sm font-medium">{tr("Location")}</label>
         <input
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           required
-          placeholder="Street, number, city"
+          placeholder={tr("Street, number, city")}
           className={inputCls}
         />
 
         <div className="mt-4 grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium">Preferred date</label>
+            <label className="block text-sm font-medium">{tr("Preferred date")}</label>
             <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required className={inputCls} />
           </div>
           <div>
-            <label className="block text-sm font-medium">Priority</label>
+            <label className="block text-sm font-medium">{tr("Priority")}</label>
             <select value={priority} onChange={(e) => setPriority(e.target.value)} className={inputCls}>
               {['Low', 'Medium', 'High', 'Urgent'].map((p) => (
                 <option key={p}>{p}</option>
@@ -134,7 +136,7 @@ export function RequestDialog({ defaultLocation, onClose }: { defaultLocation: s
 
         <div className="mt-4 grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-sm font-medium">Budget from ($)</label>
+            <label className="block text-sm font-medium">{tr("Budget from ($)")}</label>
             <input
               type="number"
               min="0"
@@ -146,30 +148,26 @@ export function RequestDialog({ defaultLocation, onClose }: { defaultLocation: s
             />
           </div>
           <div>
-            <label className="block text-sm font-medium">Budget to ($)</label>
+            <label className="block text-sm font-medium">{tr("Budget to ($)")}</label>
             <input
               type="number"
               min="0"
               value={budgetMax}
               onChange={(e) => setBudgetMax(e.target.value)}
-              placeholder="250 (optional)"
+              placeholder={tr("250 (optional)")}
               className={inputCls}
             />
           </div>
         </div>
 
         <div className="mt-6 flex justify-end gap-2">
-          <button type="button" onClick={onClose} className="rounded-md border border-input px-4 py-2 text-sm hover:bg-accent">
-            Cancel
-          </button>
+          <button type="button" onClick={onClose} className="rounded-md border border-input px-4 py-2 text-sm hover:bg-accent">{tr("Cancel")}</button>
           <button
             type="submit"
             disabled={busy}
             className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
           >
-            {busy && <Loader2 className="size-4 animate-spin" />}
-            Create request
-          </button>
+            {busy && <Loader2 className="size-4 animate-spin" />}{" "}{tr("Create request")}</button>
         </div>
       </form>
     </div>

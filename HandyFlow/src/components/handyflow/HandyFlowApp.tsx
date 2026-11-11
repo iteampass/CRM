@@ -1,3 +1,4 @@
+import { useI18n } from "@/lib/i18n";
 import { GetProDialog } from "./GetProDialog";
 import { FlagImg } from "@/components/CountrySelect";
 import { COUNTRIES } from "@/lib/countries";
@@ -106,6 +107,7 @@ function Sidebar({
   onEditProfile: () => void;
   onOpenSupport: () => void;
 }) {
+  const { t: tr, locale } = useI18n();
   const { openRequests, archivedRequests, viewer, hasClientRequests } = useData();
   const country = COUNTRIES.find((item) => item.code === viewer.countryCode.trim().toUpperCase())
     ?? COUNTRIES.find((item) => item.name.toLowerCase() === viewer.country.trim().toLowerCase());
@@ -141,22 +143,22 @@ function Sidebar({
   }, [open, setOpen]);
   return (
     <>
-    {open && <button type="button" className="sidebar-backdrop" aria-label="Close navigation" onClick={() => setOpen(false)} />}
+    {open && <button type="button" className="sidebar-backdrop" aria-label={tr("Close navigation")} onClick={() => setOpen(false)} />}
     <aside className={`sidebar ${open ? "sidebar-open" : ""}`}>
       <div className="brand">
-        <Link to="/" aria-label="HandyFlow home" onClick={() => setOpen(false)}
+        <Link to="/" aria-label={tr("HandyFlow home")} onClick={() => setOpen(false)}
           className="flex items-center gap-2.5 rounded-md text-inherit no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand">
           <div className="brand-mark">
             <Hammer />
           </div>
-          <span>Handy<span className="brand-accent">Flow</span></span>
+          <span>{tr("Handy")}<span className="brand-accent">{tr("Flow")}</span></span>
         </Link>
-        <button className="mobile-close" onClick={() => setOpen(false)} aria-label="Close navigation">
+        <button className="mobile-close" onClick={() => setOpen(false)} aria-label={tr("Close navigation")}>
           <X />
         </button>
       </div>
       <div className="sidebar-scroll">
-      <nav aria-label="Main navigation">
+      <nav aria-label={tr("Main navigation")}>
         <p className="nav-label flex items-center gap-2">
           {country && <FlagImg code={country.code} />}
           <span>{country?.name || viewer.country || "Country not set"}</span>
@@ -172,12 +174,12 @@ function Sidebar({
             }}
           >
             <Icon />
-            {label}
+            {tr(label)}
             {label === "Requests" && <span className="nav-count">{openRequests.length}</span>}
             {label === "Archived requests" && <span className="nav-count">{archivedRequests.length}</span>}
           </button>
         ))}
-        <p className="nav-label nav-label-spaced">Manage</p>
+        <p className="nav-label nav-label-spaced">{tr("Manage")}</p>
         {(viewer.role !== "handyman" || hasClientRequests) && <button
           type="button"
           className={`nav-item ${active === "Payments" ? "nav-item-active" : ""}`}
@@ -186,14 +188,11 @@ function Sidebar({
             setOpen(false);
           }}
         >
-          <CircleDollarSign />
-          Payments
-        </button>}
+          <CircleDollarSign />{tr("Payments")}</button>}
         {viewer.role === "handyman" && (
           <button type="button" className={`nav-item ${active === "Income" ? "nav-item-active" : ""}`}
             onClick={() => { setActive("Income"); setOpen(false); }}>
-            <CircleDollarSign /> Income
-          </button>
+            <CircleDollarSign />{tr("Income")}</button>
         )}
         <button
           type="button"
@@ -203,16 +202,13 @@ function Sidebar({
             setOpen(false);
           }}
         >
-          <Settings />
-          Settings
-        </button>
+          <Settings />{tr("Settings")}</button>
       </nav>
       <div className="sidebar-help">
         <ShieldCheck />
-        <strong>Need a hand?</strong>
-        <span>Our support team is here.</span>
-        <button type="button" onClick={() => { setOpen(false); onOpenSupport(); }}>
-          Get support <ChevronRight />
+        <strong>{tr("Need a hand?")}</strong>
+        <span>{tr("Our support team is here.")}</span>
+        <button type="button" onClick={() => { setOpen(false); onOpenSupport(); }}>{tr("Get support")}<ChevronRight />
         </button>
       </div>
       </div>
@@ -220,14 +216,14 @@ function Sidebar({
         <Avatar initials={viewer.initials} tone="coral" src={viewer.avatarUrl} />
         <div>
           <strong>{viewer.name}</strong>
-          <span>{signingOut ? "Signing out…" : "Signed in"}</span>
+          <span>{signingOut ? tr("Signing out…") : tr("Signed in")}</span>
         </div>
         <div style={{ position: "relative" }}>
           <button
             type="button"
             className="icon-button"
             onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Account menu"
+            aria-label={tr("Account menu")}
             aria-expanded={menuOpen}
           >
             <MoreHorizontal />
@@ -241,17 +237,13 @@ function Sidebar({
                   setOpen(false);
                   onEditProfile();
                 }}
-              >
-                Change profile
-              </button>
+              >{tr("Change profile")}</button>
               <button
                 type="button"
                 onClick={() => {
                   void handleSignOutClick();
                 }}
-              >
-                Log out
-              </button>
+              >{tr("Log out")}</button>
             </div>
           )}
         </div>
@@ -289,6 +281,7 @@ function Topbar({
   search: string;
   onSearchChange: (v: string) => void;
 }) {
+  const { t: tr, locale } = useI18n();
   const { viewer } = useData();
   const [proOpen, setProOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
@@ -307,33 +300,33 @@ function Topbar({
   }
   return (
     <header className="topbar">
-      <button className="mobile-menu" onClick={() => setOpen(true)} aria-label="Open navigation">
+      <button className="mobile-menu" onClick={() => setOpen(true)} aria-label={tr("Open navigation")}>
         <Menu />
       </button>
       <div className="crumb">
-        <span className="crumb-muted">Workspace</span>
+        <span className="crumb-muted">{tr("Workspace")}</span>
         <ChevronRight />
-        <strong>{active}</strong>
+        <strong>{tr(active)}</strong>
       </div>
       {proOpen && <GetProDialog onClose={() => setProOpen(false)} />}
       <div className="top-actions">
-        <button type="button" className="primary-button get-pro-button" onClick={() => setProOpen(true)}>Get Pro</button>
+        <button type="button" className="primary-button get-pro-button" onClick={() => setProOpen(true)}>{tr("Get Pro")}</button>
         <label className="search-box">
           <Search />
           <input
-            aria-label="Search"
-            placeholder="Search handymen, feedback..."
+            aria-label={tr("Search")}
+            placeholder={tr("Search handymen, feedback...")}
             value={search}
             onChange={(e) => onSearchChange(e.target.value)}
           />
         </label>
-        <button className="icon-button theme-button" onClick={() => setDark(!dark)} aria-label="Toggle theme">
+        <button className="icon-button theme-button" onClick={() => setDark(!dark)} aria-label={tr("Toggle theme")}>
           {dark ? <Sun /> : <Moon />}
         </button>
         <div style={{ position: "relative" }}>
           <button
             className="icon-button notification"
-            aria-label="Notifications"
+            aria-label={tr("Notifications")}
             onClick={() => {
               const next = !notifOpen;
               setNotifOpen(next);
@@ -346,19 +339,17 @@ function Topbar({
           {notifOpen && (
             <div className="notif-panel">
               <header className="flex items-center justify-between gap-2">
-                <span>Notifications</span>
+                <span>{tr("Notifications")}</span>
                 {notifications.length > 0 && (
                   <button
                     type="button"
                     className="text-xs font-medium text-muted-foreground hover:text-foreground"
                     onClick={onClearNotifications}
-                  >
-                    Clear all
-                  </button>
+                  >{tr("Clear all")}</button>
                 )}
               </header>
               {notifications.length === 0 ? (
-                <p className="notif-empty">Nothing new yet.</p>
+                <p className="notif-empty">{tr("Nothing new yet.")}</p>
               ) : (
                 notifications.map((n) => (
                   <button
@@ -372,7 +363,7 @@ function Topbar({
                   >
                     <strong>{n.title}</strong>
                     <span>{n.body}</span>
-                    <small>{new Date(n.at).toLocaleTimeString()}</small>
+                    <small>{new Date(n.at).toLocaleTimeString(locale)}</small>
                   </button>
                 ))
               )}
@@ -392,7 +383,7 @@ function Topbar({
             <Avatar initials={viewer.initials} tone="blue" src={viewer.avatarUrl} />
             <div>
               <strong>{viewer.name}</strong>
-              <span>{signingOut ? "Signing out…" : viewer.role === "handyman" ? "Handyman" : "Client"}</span>
+              <span>{signingOut ? tr("Signing out…") : viewer.role === "handyman" ? tr("Handyman") : tr("Client")}</span>
             </div>
             <ChevronDown />
           </button>
@@ -404,17 +395,13 @@ function Topbar({
                   setMenuOpen(false);
                   onEditProfile();
                 }}
-              >
-                Change profile
-              </button>
+              >{tr("Change profile")}</button>
               <button
                 type="button"
                 onClick={() => {
                   void handleSignOutClick();
                 }}
-              >
-                Log out
-              </button>
+              >{tr("Log out")}</button>
             </div>
           )}
         </div>
@@ -435,6 +422,7 @@ function StatCard({
   tone: string;
   value: number;
 }) {
+  const { t: tr, locale } = useI18n();
   const { takenRequests, openRequests, handymen, viewer } = useData();
   const { openHandyman } = useUI();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -452,7 +440,7 @@ function StatCard({
     label === "Active requests"
       ? openRequests.map((r) => ({
           title: r.title,
-          meta: `${r.client} · ${r.category}`,
+          meta: `${r.client} · ${tr(r.category)}`,
           badge: r.status,
         }))
       : label === "Available handymen"
@@ -496,7 +484,7 @@ function StatCard({
     setMenuOpen(false);
     const item = takenRequests.find((t) => t.status === "Done" && !t.rated);
     if (!item) {
-      toast.info("No completed projects waiting for your review.");
+      toast.info(tr("No completed projects waiting for your review."));
       return;
     }
     setReview({ item, focus });
@@ -515,7 +503,7 @@ function StatCard({
         <Icon />
       </div>
       <div className="stat-copy">
-        <span>{label}</span>
+        <span>{tr(label)}</span>
         <strong>{value}</strong>
         <small>{note}</small>
       </div>
@@ -523,10 +511,10 @@ function StatCard({
         <button
           type="button"
           className="icon-button"
-          aria-label={`${label} options`}
+          aria-label={`${tr(label)} options`}
           aria-expanded={menuOpen}
           disabled={empty}
-          title={empty ? "Nothing to show yet" : undefined}
+          title={empty ? tr("Nothing to show yet") : undefined}
           onClick={() => setMenuOpen(!menuOpen)}
         >
           <MoreHorizontal className="card-menu" />
@@ -539,17 +527,11 @@ function StatCard({
                 setMenuOpen(false);
                 setDetailsOpen(true);
               }}
-            >
-              Show details
-            </button>
+            >{tr("Show details")}</button>
             {isClient && isCompleted && (
               <>
-                <button type="button" onClick={() => openReview("rating")}>
-                  Rate handyman
-                </button>
-                <button type="button" onClick={() => openReview("feedback")}>
-                  Project feedback
-                </button>
+                <button type="button" onClick={() => openReview("rating")}>{tr("Rate handyman")}</button>
+                <button type="button" onClick={() => openReview("feedback")}>{tr("Project feedback")}</button>
               </>
             )}
           </div>
@@ -566,15 +548,15 @@ function StatCard({
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 className="text-lg font-semibold">{label}</h2>
+                <h2 className="text-lg font-semibold">{tr(label)}</h2>
                 <p className="mt-1 text-sm text-muted-foreground">
-                  {value} {value === 1 ? "item" : "items"} · {note}
+                  {value} {value === 1 ? tr("item") : tr("items")} · {note}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setDetailsOpen(false)}
-                aria-label="Close"
+                aria-label={tr("Close")}
                 className="rounded-md p-1 hover:bg-accent"
               >
                 <X className="size-4" />
@@ -631,20 +613,22 @@ function StatCard({
   );
 }
 function StatCards() {
+  const { t: tr, locale } = useI18n();
   const { stats } = useData();
   const values = [stats.activeRequests, stats.availableHandymen, stats.activeProjects, stats.completed];
   return (
-    <section className="stats-grid" aria-label="Business summary">
+    <section className="stats-grid" aria-label={tr("Business summary")}>
       {statMeta.map(([label, note, Icon, tone], index) => (
-        <StatCard key={label} label={label} note={note} Icon={Icon} tone={tone} value={values[index] ?? 0} />
+        <StatCard key={label} label={tr(label)} note={tr(note)} Icon={Icon} tone={tone} value={values[index] ?? 0} />
       ))}
     </section>
   );
 }
 function Dashboard({ setActive }: { setActive: (v: string) => void }) {
+  const { t: tr, locale } = useI18n();
   const { takenRequests, viewer } = useData();
   const isClient = viewer.role === "client";
-  const todayLabel = new Date().toLocaleDateString("en-US", {
+  const todayLabel = new Date().toLocaleDateString(locale, {
     weekday: "long",
     month: "long",
     day: "numeric",
@@ -655,23 +639,21 @@ function Dashboard({ setActive }: { setActive: (v: string) => void }) {
       <div className="welcome-row">
         <div>
           <p className="eyebrow">{todayLabel}</p>
-          <h1>Good morning, {viewer.name.split(" ")[0]}</h1>
-          <p className="subheading">A quick view of your HandyFlow workspace.</p>
+          <h1>{tr("Good morning,")}{" "}{viewer.name.split(" ")[0]}</h1>
+          <p className="subheading">{tr("A quick view of your HandyFlow workspace.")}</p>
         </div>
         <button className="primary-button" onClick={() => setActive("Requests")}>
-          <Plus /> New request
-        </button>
+          <Plus />{tr("New request")}</button>
       </div>
       <StatCards />
       <section className="panel activity-panel">
         <div className="panel-heading">
           <div>
-            <h2>Recent activity</h2>
-            <p>Latest updates across your taken requests.</p>
+            <h2>{tr("Recent activity")}</h2>
+            <p>{tr("Latest updates across your taken requests.")}</p>
           </div>
           {!isClient && (
-            <button className="text-button" onClick={() => setActive("Client")}>
-              View tasks <ChevronRight />
+            <button className="text-button" onClick={() => setActive("Client")}>{tr("View tasks")}<ChevronRight />
             </button>
           )}
         </div>
@@ -682,10 +664,10 @@ function Dashboard({ setActive }: { setActive: (v: string) => void }) {
               <div>
                 <strong>{item.title}</strong>
                 <span>
-                  {item.client} · {item.category}
+                  {item.client} · {tr(item.category)}
                 </span>
               </div>
-              <Badge tone={item.status === "In progress" ? "progress" : "new"}>{item.status}</Badge>
+              <Badge tone={item.status === "In progress" ? "progress" : "new"}>{tr(item.status)}</Badge>
             </div>
           ))}
         </div>
@@ -709,6 +691,7 @@ function Stars({ value }: { value: number }) {
 }
 
 function FeedbackPanel({ request }: { request?: OpenRequest } = {}) {
+  const { t: tr, locale } = useI18n();
   const data = useData();
   const feedback = (data.feedback ?? []).filter((entry) => !request || entry.taskId === request.id);
   const takenRequests = (data.takenRequests ?? []).filter((item) => !request || item.id === request.id);
@@ -722,14 +705,14 @@ function FeedbackPanel({ request }: { request?: OpenRequest } = {}) {
   const isClient = request ? request.mineAsClient : viewer.role === "client";
 
   return (
-    <section className="panel activity-panel" aria-label="Feedback and ratings">
+    <section className="panel activity-panel" aria-label={tr("Feedback and ratings")}>
       <div className="panel-heading">
         <div>
-          <h2>{request ? "Testimonials & ratings" : "Feedback & ratings"}</h2>
+          <h2>{request ? tr("Testimonials & ratings") : tr("Feedback & ratings")}</h2>
           <p>
             {isClient
-              ? "Rate your handymen after a project is completed — they can rate you too."
-              : "Rate your clients after a project is completed — they can rate you too."}
+              ? tr("Rate your handymen after a project is completed — they can rate you too.")
+              : tr("Rate your clients after a project is completed — they can rate you too.")}
           </p>
         </div>
       </div>
@@ -744,16 +727,13 @@ function FeedbackPanel({ request }: { request?: OpenRequest } = {}) {
               <div className="text-sm">
                 <strong className="font-semibold">{item.title}</strong>
                 <span className="ml-2 text-muted-foreground">
-                  {isClient ? item.handyman : item.client} · completed
-                </span>
+                  {isClient ? item.handyman : item.client}{" "}{tr("· completed")}</span>
               </div>
               <button
                 type="button"
                 className="primary-button"
                 onClick={() => setReview({ item, focus: "rating" })}
-              >
-                Leave feedback
-              </button>
+              >{tr("Leave feedback")}</button>
             </div>
           ))}
         </div>
@@ -762,7 +742,7 @@ function FeedbackPanel({ request }: { request?: OpenRequest } = {}) {
       <div className="mt-3 space-y-2">
         {feedback.length === 0 && pending.length === 0 && (
           <p className="text-sm text-muted-foreground">
-            {request?.status === "cancelled" ? "This request was cancelled. Ratings are available only for completed projects." : "No feedback yet. Reviews become available once a project is completed."}
+            {request?.status === "cancelled" ? tr("This request was cancelled. Ratings are available only for completed projects.") : tr("No feedback yet. Reviews become available once a project is completed.")}
           </p>
         )}
         {feedback.map((f) => (
@@ -772,7 +752,7 @@ function FeedbackPanel({ request }: { request?: OpenRequest } = {}) {
               <div className="min-w-0 flex-1">
                 <strong className="text-sm font-semibold">{f.authorName}</strong>
                 <span className="ml-2 text-xs text-muted-foreground">
-                  {f.mine ? "you rated" : "rated"} {f.targetName} · {f.taskTitle}
+                  {f.mine ? tr("you rated") : tr("rated")} {f.targetName} · {f.taskTitle}
                 </span>
               </div>
               <Stars value={f.rating} />
@@ -796,6 +776,7 @@ function TaskDetailsDialog({
   item: WorkspaceData["takenRequests"][number];
   onClose: () => void;
 }) {
+  const { t: tr, locale } = useI18n();
   const { viewer } = useData();
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
@@ -807,41 +788,41 @@ function TaskDetailsDialog({
           <div>
             <h2 className="text-lg font-semibold">{item.title}</h2>
             <p className="text-sm text-muted-foreground">
-              {item.client} · {item.category}
+              {item.client} · {tr(item.category)}
             </p>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close" className="rounded-md p-1 hover:bg-accent">
+          <button type="button" onClick={onClose} aria-label={tr("Close")} className="rounded-md p-1 hover:bg-accent">
             <X className="size-4" />
           </button>
         </div>
         <p className="mt-4 text-sm text-muted-foreground">{item.description || "No description provided."}</p>
         <dl className="mt-5 grid grid-cols-2 gap-4 text-sm">
           <div>
-            <dt className="text-muted-foreground">Status</dt>
-            <dd className="font-medium">{item.status}</dd>
+            <dt className="text-muted-foreground">{tr("Status")}</dt>
+            <dd className="font-medium">{tr(item.status)}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">Priority</dt>
+            <dt className="text-muted-foreground">{tr("Priority")}</dt>
             <dd className="font-medium">{item.priority}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">Location</dt>
+            <dt className="text-muted-foreground">{tr("Location")}</dt>
             <dd className="font-medium">{item.location}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">Due</dt>
+            <dt className="text-muted-foreground">{tr("Due")}</dt>
             <dd className="font-medium">{item.due}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">Assigned to</dt>
+            <dt className="text-muted-foreground">{tr("Assigned to")}</dt>
             <dd className="font-medium">{item.handyman}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">Agreed price</dt>
+            <dt className="text-muted-foreground">{tr("Agreed price")}</dt>
             <dd className="font-medium">{item.agreedPrice != null ? `$${item.agreedPrice}` : "—"}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">Progress</dt>
+            <dt className="text-muted-foreground">{tr("Progress")}</dt>
             <dd className="font-medium">{item.progress}%</dd>
           </div>
         </dl>
@@ -860,6 +841,7 @@ function TaskReviewDialog({
   focus: "rating" | "feedback";
   onClose: () => void;
 }) {
+  const { t: tr, locale } = useI18n();
   const queryClient = useQueryClient();
   const { viewer, archivedRequests } = useData();
   const ownRequest = archivedRequests.find((request) => request.id === item.id);
@@ -874,17 +856,17 @@ function TaskReviewDialog({
 
   async function handleSubmit() {
     if (rating === 0) {
-      toast.error("Please pick a star rating first.");
+      toast.error(tr("Please pick a star rating first."));
       return;
     }
     setSaving(true);
     try {
       await submit({ data: { taskId: item.id, rating, comment } });
-      toast.success("Thanks! Your review was submitted.");
+      toast.success(tr("Thanks! Your review was submitted."));
       await queryClient.invalidateQueries({ queryKey: ["workspace"] });
       onClose();
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Couldn't submit the review.");
+      toast.error(tr(err instanceof Error ? err.message : "Couldn't submit the review."));
     } finally {
       setSaving(false);
     }
@@ -899,18 +881,18 @@ function TaskReviewDialog({
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="text-lg font-semibold">
-              {focus === "rating" ? `Rate ${counterpart}` : "Project feedback"}
+              {focus === "rating" ? `Rate ${counterpart}` : tr("Project feedback")}
             </h2>
 
             <p className="text-sm text-muted-foreground">{item.title}</p>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close" className="rounded-md p-1 hover:bg-accent">
+          <button type="button" onClick={onClose} aria-label={tr("Close")} className="rounded-md p-1 hover:bg-accent">
             <X className="size-4" />
           </button>
         </div>
 
         <div className="mt-5">
-          <p className="text-sm font-medium">Your rating</p>
+          <p className="text-sm font-medium">{tr("Your rating")}</p>
           <div className="mt-2 flex gap-1">
             {[1, 2, 3, 4, 5].map((n) => (
               <button
@@ -935,15 +917,13 @@ function TaskReviewDialog({
         </div>
 
         <div className="mt-4">
-          <label htmlFor="review-comment" className="text-sm font-medium">
-            Feedback about the project
-          </label>
+          <label htmlFor="review-comment" className="text-sm font-medium">{tr("Feedback about the project")}</label>
           <textarea
             id="review-comment"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
             rows={4}
-            placeholder="How did the job go? Anything worth mentioning?"
+            placeholder={tr("How did the job go? Anything worth mentioning?")}
             className="mt-2 w-full rounded-md border border-input bg-background p-2 text-sm outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
@@ -953,16 +933,14 @@ function TaskReviewDialog({
             type="button"
             onClick={onClose}
             className="rounded-md border border-border px-4 py-2 text-sm font-medium hover:bg-accent"
-          >
-            Cancel
-          </button>
+          >{tr("Cancel")}</button>
           <button
             type="button"
             onClick={() => void handleSubmit()}
             disabled={saving}
             className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50"
           >
-            {saving ? "Submitting…" : "Submit review"}
+            {saving ? tr("Submitting…") : tr("Submit review")}
           </button>
         </div>
       </div>
@@ -971,6 +949,7 @@ function TaskReviewDialog({
 }
 
 function TaskCard({ item }: { item: WorkspaceData["takenRequests"][number] }) {
+  const { t: tr, locale } = useI18n();
   const { viewer } = useData();
   const [menuOpen, setMenuOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
@@ -983,13 +962,13 @@ function TaskCard({ item }: { item: WorkspaceData["takenRequests"][number] }) {
     <article className="task-card task-card-hover">
       <div className="task-card-top">
         <Badge tone={item.status === "Done" ? "success" : item.status === "In progress" ? "progress" : "new"}>
-          {item.status}
+          {tr(item.status)}
         </Badge>
         <div style={{ position: "relative" }}>
           <button
             type="button"
             className="icon-button"
-            aria-label="Task options"
+            aria-label={tr("Task options")}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen(!menuOpen)}
           >
@@ -1003,9 +982,7 @@ function TaskCard({ item }: { item: WorkspaceData["takenRequests"][number] }) {
                   setMenuOpen(false);
                   setDetailsOpen(true);
                 }}
-              >
-                Show details
-              </button>
+              >{tr("Show details")}</button>
               {canReview && (
                 <>
                   <button
@@ -1014,18 +991,14 @@ function TaskCard({ item }: { item: WorkspaceData["takenRequests"][number] }) {
                       setMenuOpen(false);
                       setReviewFocus("rating");
                     }}
-                  >
-                    Rate handyman
-                  </button>
+                  >{tr("Rate handyman")}</button>
                   <button
                     type="button"
                     onClick={() => {
                       setMenuOpen(false);
                       setReviewFocus("feedback");
                     }}
-                  >
-                    Project feedback
-                  </button>
+                  >{tr("Project feedback")}</button>
                 </>
               )}
             </div>
@@ -1038,7 +1011,7 @@ function TaskCard({ item }: { item: WorkspaceData["takenRequests"][number] }) {
       )}
       <h3>{item.title}</h3>
       <p>
-        {item.client} <span>·</span> {item.category}
+        {item.client} <span>·</span> {tr(item.category)}
       </p>
       <div className="task-assignee">
         <Avatar
@@ -1048,8 +1021,7 @@ function TaskCard({ item }: { item: WorkspaceData["takenRequests"][number] }) {
             .join("")}
           tone={item.tone}
         />
-        <span>
-          Assigned to <strong>{item.handyman}</strong>
+        <span>{tr("Assigned to")}<strong>{item.handyman}</strong>
         </span>
       </div>
       <div className="task-meta">
@@ -1060,7 +1032,7 @@ function TaskCard({ item }: { item: WorkspaceData["takenRequests"][number] }) {
       </div>
       <div className="task-progress">
         <div>
-          <span>Progress</span>
+          <span>{tr("Progress")}</span>
           <strong>{item.progress}%</strong>
         </div>
         <div className="progress-track">
@@ -1071,6 +1043,7 @@ function TaskCard({ item }: { item: WorkspaceData["takenRequests"][number] }) {
   );
 }
 function ClientView() {
+  const { t: tr, locale } = useI18n();
   const { clientTasks } = useData();
   const [filter, setFilter] = useState("All");
   const groups = filter === "All" ? ["To do", "In progress", "Done"] : [filter];
@@ -1078,13 +1051,12 @@ function ClientView() {
     <div className="page-content">
       <div className="welcome-row">
         <div>
-          <p className="eyebrow">Taken requests</p>
-          <h1>Client tasks</h1>
-          <p className="subheading">Every accepted request, organized by what needs to happen next.</p>
+          <p className="eyebrow">{tr("Taken requests")}</p>
+          <h1>{tr("Client tasks")}</h1>
+          <p className="subheading">{tr("Every accepted request, organized by what needs to happen next.")}</p>
         </div>
         <button className="primary-button">
-          <Plus /> Take a request
-        </button>
+          <Plus />{tr("Take a request")}</button>
       </div>
       <section className="panel task-board-panel">
         <div className="board-toolbar">
@@ -1097,8 +1069,7 @@ function ClientView() {
             ))}
           </div>
           <button className="filter-button">
-            <Filter /> Filter
-          </button>
+            <Filter />{tr("Filter")}</button>
         </div>
         <div className="task-board">
           {groups.map((group) => (
@@ -1126,6 +1097,7 @@ function ClientView() {
   );
 }
 function RequestMapView({ requests }: { requests: OpenRequest[] }) {
+  const { t: tr, locale } = useI18n();
   const [coords, setCoords] = useState<
     Record<string, { lat: number; lon: number; display: string } | null | undefined>
   >({});
@@ -1149,7 +1121,7 @@ function RequestMapView({ requests }: { requests: OpenRequest[] }) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [requests]);
-  if (!requests.length) return <p className="map-empty">No requests to display on the map.</p>;
+  if (!requests.length) return <p className="map-empty">{tr("No requests to display on the map.")}</p>;
   return (
     <div className="map-grid">
       {requests.map((r) => {
@@ -1164,7 +1136,7 @@ function RequestMapView({ requests }: { requests: OpenRequest[] }) {
                   {r.client} · {r.location}
                 </span>
               </div>
-              <Badge tone="new">{r.category}</Badge>
+              <Badge tone="new">{tr(r.category)}</Badge>
             </div>
             {c ? (
               <iframe
@@ -1174,9 +1146,9 @@ function RequestMapView({ requests }: { requests: OpenRequest[] }) {
                 loading="lazy"
               />
             ) : c === null ? (
-              <div className="map-empty">Location not found</div>
+              <div className="map-empty">{tr("Location not found")}</div>
             ) : (
-              <div className="map-loading">Locating…</div>
+              <div className="map-loading">{tr("Locating…")}</div>
             )}
           </article>
         );
@@ -1185,6 +1157,7 @@ function RequestMapView({ requests }: { requests: OpenRequest[] }) {
   );
 }
 function RequestListView({ archivedOnly = false }: { archivedOnly?: boolean }) {
+  const { t: tr, locale } = useI18n();
   const { openRequests, archivedRequests, viewer } = useData();
   const [filter, setFilter] = useState("All");
   const [query, setQuery] = useState("");
@@ -1218,56 +1191,42 @@ function RequestListView({ archivedOnly = false }: { archivedOnly?: boolean }) {
     <div className="page-content">
       <div className="welcome-row">
         <div>
-          <p className="eyebrow">{archivedOnly ? "Request history" : viewer.role === "client" ? "Your requests" : "Open opportunities"}</p>
-          <h1>{archivedOnly ? "Archived requests" : "Requests"}</h1>
+          <p className="eyebrow">{archivedOnly ? tr("Request history") : viewer.role === "client" ? tr("Your requests") : tr("Open opportunities")}</p>
+          <h1>{archivedOnly ? tr("Archived requests") : tr("Requests")}</h1>
           <p className="subheading">
-            {archivedOnly ? "Your completed and cancelled requests." : viewer.role === "client"
-              ? "Every request you created, with its current status."
-              : "Browse work that is ready to be taken by your team."}
+            {archivedOnly ? tr("Your completed and cancelled requests.") : viewer.role === "client"
+              ? tr("Every request you created, with its current status.")
+              : tr("Browse work that is ready to be taken by your team.")}
           </p>
         </div>
         {!archivedOnly && <button type="button" className="primary-button" onClick={() => setDialogOpen(true)}>
-          <Plus /> Create request
-        </button>}
+          <Plus />{tr("Create request")}</button>}
       </div>
       <section className="panel requests-list-panel">
         <div className="request-list-header">
           <div className="list-tabs">
-            <button className={view === listView ? "list-tab-active" : ""} onClick={() => setView(listView)}>
-              List
-            </button>
-            {!archivedOnly && <><button className={view === "Map" ? "list-tab-active" : ""} onClick={() => setView("Map")}>
-              Map
-            </button>
-            <button className={view === "Calendar" ? "list-tab-active" : ""} onClick={() => setView("Calendar")}>
-              Calendar
-            </button></>}
-            {contactRequest && <button type="button" className={view === "Contact details" ? "list-tab-active" : ""} onClick={() => setView("Contact details")}>
-              Contact details
-            </button>}
-            {focusedRequest && <button type="button" className={view === "Activity log" ? "list-tab-active" : ""} onClick={() => setView("Activity log")}>
-              Activity log
-            </button>}
-            {archivedOnly && focusedRequest && <button type="button" className={view === "Testimonials & ratings" ? "list-tab-active" : ""} onClick={() => setView("Testimonials & ratings")}>
-              Testimonials &amp; ratings
-            </button>}
+            <button className={view === listView ? "list-tab-active" : ""} onClick={() => setView(listView)}>{tr("List")}</button>
+            {!archivedOnly && <><button className={view === "Map" ? "list-tab-active" : ""} onClick={() => setView("Map")}>{tr("Map")}</button>
+            <button className={view === "Calendar" ? "list-tab-active" : ""} onClick={() => setView("Calendar")}>{tr("Calendar")}</button></>}
+            {contactRequest && <button type="button" className={view === "Contact details" ? "list-tab-active" : ""} onClick={() => setView("Contact details")}>{tr("Contact details")}</button>}
+            {focusedRequest && <button type="button" className={view === "Activity log" ? "list-tab-active" : ""} onClick={() => setView("Activity log")}>{tr("Activity log")}</button>}
+            {archivedOnly && focusedRequest && <button type="button" className={view === "Testimonials & ratings" ? "list-tab-active" : ""} onClick={() => setView("Testimonials & ratings")}>{tr("Testimonials & ratings")}</button>}
 
           </div>
           <div className="request-tools">
             <label className="compact-search">
               <Search />
-              <input aria-label="Search requests" placeholder="Search requests..." value={query} onChange={(event) => { setQuery(event.target.value); setView(listView); }} />
+              <input aria-label={tr("Search requests")} placeholder={tr("Search requests...")} value={query} onChange={(event) => { setQuery(event.target.value); setView(listView); }} />
             </label>
             <button type="button" className="filter-button" aria-expanded={filtersOpen} aria-controls="request-category-filters" onClick={() => { setFiltersOpen(!filtersOpen); setView(listView); }}>
-              <Filter /> Filter
-            </button>
+              <Filter />{tr("Filter")}</button>
           </div>
         </div>
         {view !== "Contact details" && view !== "Activity log" && view !== "Testimonials & ratings" && (
           <div className="list-filter-row">
             <div>
-              <strong>{visible.length} {archivedOnly ? "archived" : "open"} requests</strong>
-              <span>{archivedOnly ? " · Completed and cancelled" : viewer.role === "client" ? " · Created by you" : " · Available to assign"}</span>
+              <strong>{visible.length} {archivedOnly ? tr("archived") : tr("open")}{" "}{tr("requests")}</strong>
+              <span>{archivedOnly ? tr(" · Completed and cancelled") : viewer.role === "client" ? tr(" · Created by you") : tr(" · Available to assign")}</span>
             </div>
             {filtersOpen && <div className="filter-pills" id="request-category-filters">
               {["All", ...Array.from(new Set(requests.map((item) => item.category)))].map((item) => (
@@ -1279,23 +1238,23 @@ function RequestListView({ archivedOnly = false }: { archivedOnly?: boolean }) {
           </div>
         )}
         {archivedOnly && view === "Testimonials & ratings" && focusedRequest && (
-          <section className="space-y-4 p-5" aria-label="Selected request testimonials and ratings">
+          <section className="space-y-4 p-5" aria-label={tr("Selected request testimonials and ratings")}>
             <h2 className="font-semibold">{focusedRequest.title}</h2>
             <FeedbackPanel key={focusedRequest.id} request={focusedRequest} />
           </section>
         )}
         {view === "Activity log" && focusedRequest && (
-          <section className="space-y-4 p-5" aria-label="Request activity log">
+          <section className="space-y-4 p-5" aria-label={tr("Request activity log")}>
             <h2 className="font-semibold">{focusedRequest.title}</h2>
             <RequestActivityLog key={focusedRequest.id} taskId={focusedRequest.id} />
           </section>
         )}
         {view === "Contact details" && contactRequest && (
           <div className="space-y-4 p-5">
-            <p className="text-sm text-muted-foreground">Contact details for your selected request.</p>
+            <p className="text-sm text-muted-foreground">{tr("Contact details for your selected request.")}</p>
             <article className="rounded-xl border border-border p-4">
               <h3 className="font-semibold">{contactRequest.title}</h3>
-              <p className="mt-1 text-xs text-muted-foreground">{STATUS_LABELS[contactRequest.status] ?? contactRequest.status}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{tr(STATUS_LABELS[contactRequest.status] ?? contactRequest.status)}</p>
               <ClientContact key={contactRequest.id} taskId={contactRequest.id} participant counterpart={contactRequest.mineAsClient ? "Handyman" : "Client"} />
             </article>
           </div>
@@ -1303,12 +1262,12 @@ function RequestListView({ archivedOnly = false }: { archivedOnly?: boolean }) {
         {view === "List" && (
           <div className="open-request-list">
             <div className="open-request-heading">
-              <span>Request</span>
-              <span>Deadline</span>
-              <span>Budget</span>
-              <span>Priority</span>
-              <span>Status</span>
-              <span>Action</span>
+              <span>{tr("Request")}</span>
+              <span>{tr("Deadline")}</span>
+              <span>{tr("Budget")}</span>
+              <span>{tr("Priority")}</span>
+              <span>{tr("Status")}</span>
+              <span>{tr("Action")}</span>
             </div>
             {visible.map((item) => (
               <article className={`open-request-row cursor-pointer ${focusedId === item.id ? "request-row-selected" : ""}`} key={item.id}
@@ -1328,18 +1287,18 @@ function RequestListView({ archivedOnly = false }: { archivedOnly?: boolean }) {
                     </span>
                     <div className="request-labels">
                       {item.labels.map((label) => (
-                        <em key={label}>{label}</em>
+                        <em key={label}>{tr(label)}</em>
                       ))}
                     </div>
                   </div>
                 </div>
                 <div className="open-request-cell">
                   <strong>{item.deadline}</strong>
-                  <span>{item.category}</span>
+                  <span>{tr(item.category)}</span>
                 </div>
                 <div className="open-request-cell">
                   <strong>{item.budget}</strong>
-                  <span>Estimated total</span>
+                  <span>{tr("Estimated total")}</span>
                 </div>
                 <div>
                   <span
@@ -1358,7 +1317,7 @@ function RequestListView({ archivedOnly = false }: { archivedOnly?: boolean }) {
                           : "new"
                     }
                   >
-                    {STATUS_LABELS[item.status] ?? item.status}
+                    {tr(STATUS_LABELS[item.status] ?? item.status)}
                   </Badge>
                 </div>
                 {viewer.role === "client" ? (
@@ -1366,23 +1325,23 @@ function RequestListView({ archivedOnly = false }: { archivedOnly?: boolean }) {
                     {item.status === "negotiating"
                       ? `Review offers (${item.offers.length})`
                       : item.status === "agreed"
-                        ? "Start work"
+                        ? tr("Start work")
                         : item.status === "in_progress"
-                          ? "Mark completed"
+                          ? tr("Mark completed")
                           : item.assigned && item.status === "pending"
-                            ? "Awaiting new offer"
+                            ? tr("Awaiting new offer")
                             : (STATUS_LABELS[item.status] ?? item.status)}{" "}
                     <ChevronRight />
                   </button>
                 ) : (
                   <button type="button" className="take-button" onClick={() => setTaking(item)}>
                     {item.status === "agreed" || item.status === "in_progress"
-                      ? "Open details"
+                      ? tr("Open details")
                       : item.offers.some((o) => o.mine && o.status === "pending")
-                        ? "Update/withdraw offer"
+                        ? tr("Update/withdraw offer")
                         : item.takenByMe
-                          ? "Make an offer"
-                          : "Take request"}{" "}
+                          ? tr("Make an offer")
+                          : tr("Take request")}{" "}
                     <ChevronRight />
 
                   </button>
@@ -1397,11 +1356,11 @@ function RequestListView({ archivedOnly = false }: { archivedOnly?: boolean }) {
           (visible.length ? (
             <div className="open-request-list">
               <div className="open-request-heading">
-                <span>Request</span>
-                <span>Deadline</span>
-                <span>Budget</span>
-                <span>Priority</span>
-                <span>Status</span>
+                <span>{tr("Request")}</span>
+                <span>{tr("Deadline")}</span>
+                <span>{tr("Budget")}</span>
+                <span>{tr("Priority")}</span>
+                <span>{tr("Status")}</span>
               </div>
               {visible.map((item) => (
                 <article className={`open-request-row cursor-pointer ${focusedId === item.id ? "request-row-selected" : ""}`} key={item.id}
@@ -1421,18 +1380,18 @@ function RequestListView({ archivedOnly = false }: { archivedOnly?: boolean }) {
                       </span>
                       <div className="request-labels">
                         {item.labels.map((label) => (
-                          <em key={label}>{label}</em>
+                          <em key={label}>{tr(label)}</em>
                         ))}
                       </div>
                     </div>
                   </div>
                   <div className="open-request-cell">
                     <strong>{item.deadline}</strong>
-                    <span>{item.category}</span>
+                    <span>{tr(item.category)}</span>
                   </div>
                   <div className="open-request-cell">
                     <strong>{item.budget}</strong>
-                    <span>Estimated total</span>
+                    <span>{tr("Estimated total")}</span>
                   </div>
                   <div>
                     <span
@@ -1443,14 +1402,14 @@ function RequestListView({ archivedOnly = false }: { archivedOnly?: boolean }) {
                   </div>
                   <div>
                     <Badge tone={item.status === "completed" ? "success" : "new"}>
-                      {item.status === "completed" ? "Completed" : "Cancelled"}
+                      {item.status === "completed" ? tr("Completed") : tr("Cancelled")}
                     </Badge>
                   </div>
                 </article>
               ))}
             </div>
           ) : (
-            <p className="map-empty">{requests.length ? "No requests match your search or category." : "No archived requests yet. Completed requests will appear here."}</p>
+            <p className="map-empty">{requests.length ? tr("No requests match your search or category.") : tr("No archived requests yet. Completed requests will appear here.")}</p>
           ))}
       </section>
       {dialogOpen && <RequestDialog defaultLocation={viewer.address} onClose={() => setDialogOpen(false)} />}
@@ -1459,6 +1418,7 @@ function RequestListView({ archivedOnly = false }: { archivedOnly?: boolean }) {
   );
 }
 function ScheduleView() {
+  const { t: tr, locale } = useI18n();
   const { scheduleDays, scheduleTasks, weekLabel, viewer } = useData();
   const [mode, setMode] = useState("Week");
   const [monthOffset, setMonthOffset] = useState(0);
@@ -1476,7 +1436,7 @@ function ScheduleView() {
   // Month grid (Mon-first) for the visible month
   const base = new Date();
   const monthStart = new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth() + monthOffset, 1));
-  const monthLabel = monthStart.toLocaleDateString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+  const monthLabel = monthStart.toLocaleDateString(locale, { month: "long", year: "numeric", timeZone: "UTC" });
   const lead = (monthStart.getUTCDay() + 6) % 7;
   const daysInMonth = new Date(Date.UTC(monthStart.getUTCFullYear(), monthStart.getUTCMonth() + 1, 0)).getUTCDate();
   const monthCells = Array.from({ length: lead + daysInMonth }, (_, i) => {
@@ -1491,13 +1451,12 @@ function ScheduleView() {
     <div className="page-content">
       <div className="welcome-row">
         <div>
-          <p className="eyebrow">Team availability</p>
-          <h1>Schedule</h1>
-          <p className="subheading">Keep every accepted request moving on time.</p>
+          <p className="eyebrow">{tr("Team availability")}</p>
+          <h1>{tr("Schedule")}</h1>
+          <p className="subheading">{tr("Keep every accepted request moving on time.")}</p>
         </div>
         <button className="primary-button">
-          <Plus /> Add task
-        </button>
+          <Plus />{tr("Add task")}</button>
       </div>
       <div className="schedule-controls">
         <div className="schedule-tabs">
@@ -1508,22 +1467,20 @@ function ScheduleView() {
           ))}
         </div>
         <div className="schedule-date">
-          <button aria-label="Previous" onClick={() => mode === "Month" && setMonthOffset((v) => v - 1)}>
+          <button aria-label={tr("Previous")} onClick={() => mode === "Month" && setMonthOffset((v) => v - 1)}>
             <ChevronRight className="rotate-180" />
           </button>
           <strong>{mode === "Month" ? monthLabel : weekLabel}</strong>
-          <button aria-label="Next" onClick={() => mode === "Month" && setMonthOffset((v) => v + 1)}>
+          <button aria-label={tr("Next")} onClick={() => mode === "Month" && setMonthOffset((v) => v + 1)}>
             <ChevronRight />
           </button>
         </div>
-        <button className="today-button" onClick={() => setMonthOffset(0)}>
-          Today
-        </button>
+        <button className="today-button" onClick={() => setMonthOffset(0)}>{tr("Today")}</button>
       </div>
       <section className="panel schedule-workspace">
         <div className="schedule-summary">
           <div>
-            <h2>{mode === "Month" ? monthLabel : mode === "List" ? "Upcoming" : "This week"}</h2>
+            <h2>{mode === "Month" ? monthLabel : mode === "List" ? tr("Upcoming") : tr("This week")}</h2>
             <p>
               {mode === "Week"
                 ? `${weekTotal} scheduled tasks this week.`
@@ -1534,18 +1491,14 @@ function ScheduleView() {
           </div>
           <div className="schedule-legend">
             <span>
-              <i className="legend-dot legend-blue" />
-              Booked
-            </span>
+              <i className="legend-dot legend-blue" />{tr("Booked")}</span>
             <span>
-              <i className="legend-dot legend-muted" />
-              Available
-            </span>
+              <i className="legend-dot legend-muted" />{tr("Available")}</span>
           </div>
         </div>
         {mode === "Week" && (
           <div className="weekly-calendar">
-            <div className="calendar-time-label">GMT</div>
+            <div className="calendar-time-label">{tr("GMT")}</div>
             {scheduleDays.map((day) => (
               <div className={`calendar-day ${day.iso === todayIso ? "calendar-today" : ""}`} key={day.day}>
                 <div className="calendar-day-header">
@@ -1560,15 +1513,13 @@ function ScheduleView() {
                         <strong>{task.title}</strong>
                         <span>{counterpartOf(task)}</span>
                         <em>
-                          {task.category} · {task.status}
+                          {tr(task.category)} · {tr(task.status)}
                         </em>
                       </article>
                     ))
                   ) : (
                     <div className="empty-day">
-                      <span />
-                      Open day
-                    </div>
+                      <span />{tr("Open day")}</div>
                   )}
                 </div>
               </div>
@@ -1595,7 +1546,7 @@ function ScheduleView() {
                       <span>{counterpartOf(task)}</span>
                     </article>
                   ))}
-                  {cell.tasks.length > 3 && <small>+{cell.tasks.length - 3} more</small>}
+                  {cell.tasks.length > 3 && <small>+{cell.tasks.length - 3}{" "}{tr("more")}</small>}
                 </div>
               ) : (
                 <div className="month-cell month-empty" key={`pad-${i}`} />
@@ -1611,7 +1562,7 @@ function ScheduleView() {
                   <div className="schedule-list-date">
                     <strong>{task.iso.slice(8, 10)}</strong>
                     <span>
-                      {new Date(`${task.iso}T00:00:00Z`).toLocaleDateString("en-US", {
+                      {new Date(`${task.iso}T00:00:00Z`).toLocaleDateString(locale, {
                         month: "short",
                         timeZone: "UTC",
                       })}
@@ -1621,16 +1572,16 @@ function ScheduleView() {
                   <div className="schedule-list-body">
                     <strong>{task.title}</strong>
                     <span>
-                      {counterpartOf(task)} · {task.category}
+                      {counterpartOf(task)} · {tr(task.category)}
                       {task.location ? ` · ${task.location}` : ""}
                     </span>
                   </div>
                   <span className="schedule-list-meta">{task.time}</span>
-                  <span className="status-badge">{task.status}</span>
+                  <span className="status-badge">{tr(task.status)}</span>
                 </div>
               ))
             ) : (
-              <p className="map-empty">No agreed tasks scheduled yet.</p>
+              <p className="map-empty">{tr("No agreed tasks scheduled yet.")}</p>
             )}
           </div>
         )}
@@ -1639,17 +1590,15 @@ function ScheduleView() {
       <section className="panel upcoming-panel">
         <div className="panel-heading">
           <div>
-            <h2>Upcoming tasks</h2>
-            <p>Grouped by what is happening next.</p>
+            <h2>{tr("Upcoming tasks")}</h2>
+            <p>{tr("Grouped by what is happening next.")}</p>
           </div>
-          <button className="text-button">
-            View all <ChevronRight />
+          <button className="text-button">{tr("View all")}<ChevronRight />
           </button>
         </div>
         <div className="upcoming-groups">
           <div>
-            <h3>
-              Today <span>{todayTasks.length}</span>
+            <h3>{tr("Today")}<span>{todayTasks.length}</span>
             </h3>
             {todayTasks.map((task) => (
               <div className="upcoming-row" key={task.title}>
@@ -1658,18 +1607,16 @@ function ScheduleView() {
                 <div>
                   <strong>{task.title}</strong>
                   <span>
-                    {task.client} · {task.category}
+                    {task.client} · {tr(task.category)}
                   </span>
                 </div>
-                <button className="outline-button">
-                  Details <ChevronRight />
+                <button className="outline-button">{tr("Details")}<ChevronRight />
                 </button>
               </div>
             ))}
           </div>
           <div>
-            <h3>
-              Upcoming <span>{upcoming.length}</span>
+            <h3>{tr("Upcoming")}<span>{upcoming.length}</span>
             </h3>
             {upcoming.slice(0, 5).map((task) => (
               <div className="upcoming-row" key={`${task.day.iso}-${task.title}`}>
@@ -1680,11 +1627,10 @@ function ScheduleView() {
                 <div>
                   <strong>{task.title}</strong>
                   <span>
-                    {task.client} · {task.category}
+                    {task.client} · {tr(task.category)}
                   </span>
                 </div>
-                <button className="outline-button">
-                  Details <ChevronRight />
+                <button className="outline-button">{tr("Details")}<ChevronRight />
                 </button>
               </div>
             ))}
@@ -1703,6 +1649,7 @@ function HandymanProfileDialog({
   feedback: WorkspaceData["feedback"];
   onClose: () => void;
 }) {
+  const { t: tr, locale } = useI18n();
   const personFeedback = feedback.filter(
     (f) => f.direction === "client_to_handyman" && f.targetName === person.name,
   );
@@ -1720,7 +1667,7 @@ function HandymanProfileDialog({
               <p className="text-sm text-muted-foreground">{person.role}</p>
             </div>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close" className="rounded-md p-1 hover:bg-accent">
+          <button type="button" onClick={onClose} aria-label={tr("Close")} className="rounded-md p-1 hover:bg-accent">
             <X className="size-4" />
           </button>
         </div>
@@ -1729,14 +1676,14 @@ function HandymanProfileDialog({
           <span className="inline-flex items-center gap-1">
             <Star className="size-4 fill-warning text-warning" />
             <strong>{person.rating}</strong>
-            <span className="text-muted-foreground">({person.reviews} reviews)</span>
+            <span className="text-muted-foreground">({person.reviews}{" "}{tr("reviews)")}</span>
           </span>
-          <span className="text-muted-foreground">{person.jobs} jobs completed</span>
+          <span className="text-muted-foreground">{person.jobs}{" "}{tr("jobs completed")}</span>
           <strong>{person.rate}</strong>
         </div>
 
         <p className={person.available ? "mt-2 text-sm font-medium text-success" : "mt-2 text-sm font-medium text-destructive"}>
-          {person.available ? "Available for work" : "Currently on a job"}
+          {person.available ? tr("Available for work") : tr("Currently on a job")}
         </p>
 
         {person.location && (
@@ -1758,7 +1705,7 @@ function HandymanProfileDialog({
         {person.bio && <p className="mt-3 text-sm text-muted-foreground">{person.bio}</p>}
 
         <div className="mt-5">
-          <h3 className="text-sm font-semibold">Public feedback</h3>
+          <h3 className="text-sm font-semibold">{tr("Public feedback")}</h3>
           {personFeedback.length ? (
             <ul className="mt-2 space-y-2">
               {personFeedback.map((f) => (
@@ -1774,7 +1721,7 @@ function HandymanProfileDialog({
               ))}
             </ul>
           ) : (
-            <p className="mt-2 text-sm text-muted-foreground">No public feedback yet.</p>
+            <p className="mt-2 text-sm text-muted-foreground">{tr("No public feedback yet.")}</p>
           )}
         </div>
       </div>
@@ -1793,6 +1740,7 @@ function HandymenView({
   focusId: string | null;
   onFocusHandled: () => void;
 }) {
+  const { t: tr, locale } = useI18n();
   const { handymen, handymenTotal, handymenAvailable, feedback } = useData();
   const [selectedId, setSelectedId] = useState<string | null>(null);
   useEffect(() => {
@@ -1818,45 +1766,38 @@ function HandymenView({
     <div className="page-content">
       <div className="welcome-row">
         <div>
-          <p className="eyebrow">Your trusted crew</p>
-          <h1>Handymen</h1>
-          <p className="subheading">Coordinate your team and see who&apos;s ready for the next job.</p>
+          <p className="eyebrow">{tr("Your trusted crew")}</p>
+          <h1>{tr("Handymen")}</h1>
+          <p className="subheading">{tr("Coordinate your team and see who's ready for the next job.")}</p>
         </div>
         <button className="primary-button" onClick={() => setInviteOpen(true)}>
-          <Plus /> Invite handyman
-        </button>
+          <Plus />{tr("Invite handyman")}</button>
       </div>
       <InviteDialog open={inviteOpen} onClose={() => setInviteOpen(false)} />
       <section className="panel">
         <div className="panel-heading">
           <div>
-            <h2>Country area</h2>
+            <h2>{tr("Country area")}</h2>
             {q ? (
               <p>
-                {matched.length} result{matched.length === 1 ? "" : "s"} for &quot;{query.trim()}&quot;{" "}
-                <button type="button" className="inline-link" onClick={onClearSearch}>
-                  Clear search
-                </button>
+                {matched.length}{" "}{tr("result")}{" "}{matched.length === 1 ? "" : tr("s")}{" "}{tr("for \"")}{query.trim()}{" "}{tr("\"")}{" "}
+                <button type="button" className="inline-link" onClick={onClearSearch}>{tr("Clear search")}</button>
               </p>
             ) : (
-              <p>{handymenTotal} handymen in your country.</p>
+              <p>{handymenTotal}{" "}{tr("handymen in your country.")}</p>
             )}
           </div>
           <div className="filter-pills">
-            <button className="filter-active">
-              All <span>{handymenTotal}</span>
+            <button className="filter-active">{tr("All")}<span>{handymenTotal}</span>
             </button>
-            <button>
-              Available <span>{handymenAvailable}</span>
+            <button>{tr("Available")}<span>{handymenAvailable}</span>
             </button>
           </div>
         </div>
         {matched.length === 0 && q && (
           <div className="empty-state">
-            <p>No handymen or public feedback match &quot;{query.trim()}&quot;.</p>
-            <button type="button" className="inline-link" onClick={onClearSearch}>
-              Clear search
-            </button>
+            <p>{tr("No handymen or public feedback match \"")}{query.trim()}{" "}{tr("\".")}</p>
+            <button type="button" className="inline-link" onClick={onClearSearch}>{tr("Clear search")}</button>
           </div>
         )}
         <div className="handyman-grid">
@@ -1871,7 +1812,7 @@ function HandymenView({
                 <Avatar initials={person.initials} tone={person.tone} large />
                 <span className={person.available ? "available-badge" : "busy-badge"}>
                   <span />
-                  {person.available ? "Available" : "On a job"}
+                  {person.available ? tr("Available") : tr("On a job")}
                 </span>
               </div>
               <strong>{person.name}</strong>
@@ -1880,12 +1821,12 @@ function HandymenView({
                 <span>
                   <Star /> {person.rating}
                 </span>
-                <span>{person.jobs} jobs</span>
+                <span>{person.jobs}{" "}{tr("jobs")}</span>
                 <strong>{person.rate}</strong>
               </div>
               {quoted.length > 0 && (
                 <div className="handyman-feedback">
-                  <span className="handyman-feedback-label">Public feedback</span>
+                  <span className="handyman-feedback-label">{tr("Public feedback")}</span>
                   {quoted.slice(0, 2).map((f) => (
                     <blockquote key={f.id}>
                       <Star /> {f.rating}/5 — “{f.comment}” <em>— {f.authorName}, {f.taskTitle}</em>
@@ -1893,8 +1834,7 @@ function HandymenView({
                   ))}
                 </div>
               )}
-              <button className="outline-button" onClick={() => setSelectedId(person.id)}>
-                View profile <ChevronRight />
+              <button className="outline-button" onClick={() => setSelectedId(person.id)}>{tr("View profile")}<ChevronRight />
               </button>
             </div>
             );
@@ -1908,11 +1848,12 @@ function HandymenView({
   );
 }
 function PaymentsView() {
+  const { t: tr, locale } = useI18n();
   const { payments, viewer } = useData();
   const isHandyman = viewer.role !== "client";
   const paid = payments.filter((p) => p.direction === "paid");
   const charged = payments.filter((p) => p.direction === "charged");
-  const money = (n: number) => `$${n.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
+  const money = (n: number) => `$${n.toLocaleString(locale, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
   const total = (list: typeof payments) => money(list.reduce((sum, p) => sum + p.amount, 0));
   const column = (title: string, subtitle: string, list: typeof payments) => (
     <section className="panel payments-column" key={title}>
@@ -1930,7 +1871,7 @@ function PaymentsView() {
               <div>
                 <strong>{item.title}</strong>
                 <span>
-                  {item.counterparty} · {item.category}
+                  {item.counterparty} · {tr(item.category)}
                 </span>
               </div>
               <div className="payments-meta">
@@ -1941,7 +1882,7 @@ function PaymentsView() {
           ))}
         </div>
       ) : (
-        <p className="map-empty">No completed tasks yet.</p>
+        <p className="map-empty">{tr("No completed tasks yet.")}</p>
       )}
     </section>
   );
@@ -1949,9 +1890,9 @@ function PaymentsView() {
     <div className="page-content">
       <div className="welcome-row">
         <div>
-          <p className="eyebrow">Finance</p>
-          <h1>Payments</h1>
-          <p className="subheading">Agreed prices from completed tasks.</p>
+          <p className="eyebrow">{tr("Finance")}</p>
+          <h1>{tr("Payments")}</h1>
+          <p className="subheading">{tr("Agreed prices from completed tasks.")}</p>
         </div>
       </div>
       <div className={isHandyman ? "payments-grid" : ""}>
@@ -1966,14 +1907,15 @@ function PaymentsView() {
   );
 }
 function TestimonialsView() {
+  const { t: tr, locale } = useI18n();
   const { viewer } = useData();
   return (
     <div className="page-content">
       <div className="welcome-row">
         <div>
-          <p className="eyebrow">Your experience</p>
-          <h1>Testimonials &amp; ratings</h1>
-          <p className="subheading">Review completed projects and share your experience with HandyFlow.</p>
+          <p className="eyebrow">{tr("Your experience")}</p>
+          <h1>{tr("Testimonials & ratings")}</h1>
+          <p className="subheading">{tr("Review completed projects and share your experience with HandyFlow.")}</p>
         </div>
       </div>
       <FeedbackPanel />
@@ -1983,20 +1925,21 @@ function TestimonialsView() {
   );
 }
 function SettingsView() {
+  const { t: tr, locale } = useI18n();
   const { viewer } = useData();
   return (
     <div className="page-content">
       <div className="welcome-row">
         <div>
-          <p className="eyebrow">Account</p>
-          <h1>Settings</h1>
-          <p className="subheading">Update your personal details and contact info.</p>
+          <p className="eyebrow">{tr("Account")}</p>
+          <h1>{tr("Settings")}</h1>
+          <p className="subheading">{tr("Update your personal details and contact info.")}</p>
         </div>
       </div>
       <section className="panel settings-panel">
         <div className="panel-heading">
           <div>
-            <h2>Profile details</h2>
+            <h2>{tr("Profile details")}</h2>
             <p>{viewer.email}</p>
           </div>
         </div>

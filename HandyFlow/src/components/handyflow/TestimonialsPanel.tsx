@@ -1,3 +1,4 @@
+import { useI18n } from "@/lib/i18n";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Star } from "lucide-react";
@@ -46,6 +47,7 @@ function Stars({ value, onChange }: { value: number; onChange?: (v: number) => v
 
 /** Form + history for the signed-in user's own testimonial. */
 export function ShareTestimonialPanel() {
+  const { t: tr, locale } = useI18n();
   const [quote, setQuote] = useState("");
   const [role, setRole] = useState("");
   const [rating, setRating] = useState(5);
@@ -67,12 +69,12 @@ export function ShareTestimonialPanel() {
     setSaving(true);
     try {
       await submitTestimonial({ data: { quote, role, rating } });
-      toast.success("Thanks! Your testimonial was sent for review.");
+      toast.success(tr("Thanks! Your testimonial was sent for review."));
       setQuote("");
       setRole("");
       await load();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Could not send your testimonial.");
+      toast.error(tr(e instanceof Error ? e.message : "Could not send your testimonial."));
     } finally {
       setSaving(false);
     }
@@ -82,8 +84,8 @@ export function ShareTestimonialPanel() {
     <section className="panel settings-panel">
       <div className="panel-heading">
         <div>
-          <h2>Share your experience</h2>
-          <p>Tell others how HandyFlow worked for you. We review every story before it goes public.</p>
+          <h2>{tr("Share your experience")}</h2>
+          <p>{tr("Tell others how HandyFlow worked for you. We review every story before it goes public.")}</p>
         </div>
       </div>
       <form
@@ -94,32 +96,32 @@ export function ShareTestimonialPanel() {
         }}
       >
         <label>
-          <span>Your story *</span>
+          <span>{tr("Your story *")}</span>
           <textarea
             rows={4}
             required
             maxLength={600}
             value={quote}
             onChange={(e) => setQuote(e.target.value)}
-            placeholder="What did you need done, and how did it go?"
+            placeholder={tr("What did you need done, and how did it go?")}
           />
         </label>
         <label>
-          <span>How should we describe you? (optional)</span>
+          <span>{tr("How should we describe you? (optional)")}</span>
           <input
             value={role}
             onChange={(e) => setRole(e.target.value)}
             maxLength={80}
-            placeholder="Homeowner, Culver City"
+            placeholder={tr("Homeowner, Culver City")}
           />
         </label>
         <label>
-          <span>Rating</span>
+          <span>{tr("Rating")}</span>
           <Stars value={rating} onChange={setRating} />
         </label>
         <div className="dialog-actions">
           <button type="submit" className="primary-button" disabled={saving || quote.trim().length < 20}>
-            {saving ? "Sending…" : "Submit testimonial"}
+            {saving ? tr("Sending…") : tr("Submit testimonial")}
           </button>
         </div>
       </form>
@@ -139,6 +141,7 @@ export function ShareTestimonialPanel() {
 
 /** Admin-only moderation: switch the public section on and pick which stories show. */
 export function TestimonialAdminPanel() {
+  const { t: tr, locale } = useI18n();
   const queryClient = useQueryClient();
   const [signInTestimonialId, setSignInTestimonialId] = useState<string | null>(null);
   const [enabled, setEnabled] = useState(false);
@@ -152,7 +155,7 @@ export function TestimonialAdminPanel() {
       setEnabled(res.enabled);
       setItems(res.items);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Could not load testimonials.");
+      toast.error(tr(e instanceof Error ? e.message : "Could not load testimonials."));
     }
   }
   useEffect(() => {
@@ -164,10 +167,10 @@ export function TestimonialAdminPanel() {
     try {
       await fn();
       await queryClient.invalidateQueries({ queryKey: ["public-testimonials"] });
-      toast.success(ok);
+      toast.success(tr(ok));
       await load();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Something went wrong.");
+      toast.error(tr(e instanceof Error ? e.message : "Something went wrong."));
     } finally {
       setBusy(false);
     }
@@ -179,11 +182,11 @@ export function TestimonialAdminPanel() {
     <section className="panel settings-panel">
       <div className="panel-heading">
         <div>
-          <h2>Manage testimonials</h2>
+          <h2>{tr("Manage testimonials")}</h2>
           <p>
             {enabled
               ? `Showing ${approvedCount} published ${approvedCount === 1 ? "story" : "stories"} to visitors.`
-              : "The testimonials section is hidden from visitors."}
+              : tr("The testimonials section is hidden from visitors.")}
           </p>
         </div>
         <button
@@ -192,22 +195,17 @@ export function TestimonialAdminPanel() {
           disabled={busy}
           onClick={() => void run(() => setTestimonialsEnabled({ data: { enabled: !enabled } }), enabled ? "Testimonials hidden." : "Testimonials are now live.")}
         >
-          {enabled ? "Turn off" : "Turn on"}
+          {enabled ? tr("Turn off") : tr("Turn on")}
         </button>
       </div>
 
-      <p className="mb-4 text-sm">
-        Choose one approved story to show on the sign-in page. No quote is shown until you choose one.
-        Unpublishing or deleting it also hides it from sign-in. The switch above controls the landing page only.
-      </p>
+      <p className="mb-4 text-sm">{tr("Choose one approved story to show on the sign-in page. No quote is shown until you choose one. Unpublishing or deleting it also hides it from sign-in. The switch above controls the landing page only.")}</p>
       {signInTestimonialId && (
         <button type="button" className="outline-button mb-4" disabled={busy}
-          onClick={() => void run(() => selectSignInTestimonial({ data: { id: null } }), "Sign-in testimonial hidden.")}>
-          Hide sign-in testimonial
-        </button>
+          onClick={() => void run(() => selectSignInTestimonial({ data: { id: null } }), "Sign-in testimonial hidden.")}>{tr("Hide sign-in testimonial")}</button>
       )}
       {items.length === 0 ? (
-        <p style={{ fontSize: ".9rem", opacity: 0.75 }}>No testimonials submitted yet.</p>
+        <p style={{ fontSize: ".9rem", opacity: 0.75 }}>{tr("No testimonials submitted yet.")}</p>
       ) : (
         <div style={{ display: "grid", gap: ".75rem" }}>
           {items.map((t) => (
@@ -217,7 +215,7 @@ export function TestimonialAdminPanel() {
                 {t.role && <span style={{ fontSize: ".8rem", opacity: 0.7 }}>{t.role}</span>}
                 <Stars value={t.rating} />
                 <span style={{ fontSize: ".75rem", opacity: 0.7 }}>{STATUS_COPY[t.status] ?? t.status}</span>
-                {t.featured && <span style={{ fontSize: ".75rem", opacity: 0.7 }}>· Featured</span>}
+                {t.featured && <span style={{ fontSize: ".75rem", opacity: 0.7 }}>{tr("· Featured")}</span>}
               </div>
               <p style={{ fontSize: ".88rem", margin: 0 }}>“{t.quote}”</p>
               <div style={{ display: "flex", flexWrap: "wrap", gap: ".5rem" }}>
@@ -225,7 +223,7 @@ export function TestimonialAdminPanel() {
                   <button type="button" className="outline-button"
                     disabled={busy || signInTestimonialId === t.id}
                     onClick={() => void run(() => selectSignInTestimonial({ data: { id: t.id } }), "Sign-in testimonial selected.")}>
-                    {signInTestimonialId === t.id ? "Selected for sign-in" : "Show on sign-in"}
+                    {signInTestimonialId === t.id ? tr("Selected for sign-in") : tr("Show on sign-in")}
                   </button>
                 )}
                 {t.status !== "approved" && (
@@ -234,9 +232,7 @@ export function TestimonialAdminPanel() {
                     className="primary-button"
                     disabled={busy}
                     onClick={() => void run(() => updateTestimonial({ data: { id: t.id, status: "approved" } }), "Testimonial published.")}
-                  >
-                    Publish
-                  </button>
+                  >{tr("Publish")}</button>
                 )}
                 {t.status === "approved" && (
                   <button
@@ -244,9 +240,7 @@ export function TestimonialAdminPanel() {
                     className="outline-button"
                     disabled={busy}
                     onClick={() => void run(() => updateTestimonial({ data: { id: t.id, status: "pending" } }), "Testimonial unpublished.")}
-                  >
-                    Unpublish
-                  </button>
+                  >{tr("Unpublish")}</button>
                 )}
                 <button
                   type="button"
@@ -254,7 +248,7 @@ export function TestimonialAdminPanel() {
                   disabled={busy}
                   onClick={() => void run(() => updateTestimonial({ data: { id: t.id, featured: !t.featured } }), t.featured ? "Removed from featured." : "Marked as featured.")}
                 >
-                  {t.featured ? "Unfeature" : "Feature"}
+                  {t.featured ? tr("Unfeature") : tr("Feature")}
                 </button>
                 {t.status !== "rejected" && (
                   <button
@@ -262,18 +256,14 @@ export function TestimonialAdminPanel() {
                     className="outline-button"
                     disabled={busy}
                     onClick={() => void run(() => updateTestimonial({ data: { id: t.id, status: "rejected" } }), "Testimonial rejected.")}
-                  >
-                    Reject
-                  </button>
+                  >{tr("Reject")}</button>
                 )}
                 <button
                   type="button"
                   className="outline-button"
                   disabled={busy}
                   onClick={() => void run(() => deleteTestimonial({ data: { id: t.id } }), "Testimonial deleted.")}
-                >
-                  Delete
-                </button>
+                >{tr("Delete")}</button>
               </div>
             </div>
           ))}

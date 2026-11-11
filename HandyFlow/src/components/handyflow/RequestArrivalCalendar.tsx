@@ -1,3 +1,5 @@
+import { useI18n } from "@/lib/i18n";
+import { sr, enGB } from "date-fns/locale";
 import { useState } from "react";
 import { Calendar } from "@/components/ui/calendar";
 import { arrivalDay, scheduledArrivals } from "@/lib/request-arrivals";
@@ -10,6 +12,7 @@ export function RequestArrivalCalendar({
   requests: OpenRequest[];
   onOpen: (request: OpenRequest) => void;
 }) {
+  const { t: tr, locale } = useI18n();
   const arrivals = scheduledArrivals(requests);
   const [selected, setSelected] = useState<Date>(() => {
     const today = new Date();
@@ -27,6 +30,7 @@ export function RequestArrivalCalendar({
     <div className="grid gap-6 p-4 sm:p-6 lg:grid-cols-[auto_minmax(0,1fr)]">
       <div>
         <Calendar
+          locale={locale === "sr-Cyrl-RS" ? sr : enGB}
           mode="single"
           required
           selected={selected}
@@ -42,9 +46,7 @@ export function RequestArrivalCalendar({
           className="rounded-xl border border-border"
         />
         <p className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-          <span className="size-1.5 rounded-full bg-brand" />
-          Scheduled handyman arrival
-        </p>
+          <span className="size-1.5 rounded-full bg-brand" />{tr("Scheduled handyman arrival")}</p>
         <button
           type="button"
           className="mt-3 text-sm font-semibold text-brand"
@@ -54,13 +56,11 @@ export function RequestArrivalCalendar({
             setSelected(today);
             setMonth(today);
           }}
-        >
-          Today
-        </button>
+        >{tr("Today")}</button>
       </div>
       <div className="min-w-0">
         <h3 className="font-semibold">
-          {selected.toLocaleDateString(undefined, {
+          {selected.toLocaleDateString(locale, {
             weekday: "long",
             month: "long",
             day: "numeric",
@@ -68,7 +68,7 @@ export function RequestArrivalCalendar({
           })}
         </h3>
         <p className="mt-1 text-sm text-muted-foreground">
-          {dayRequests.length} scheduled {dayRequests.length === 1 ? "arrival" : "arrivals"}
+          {dayRequests.length}{" "}{tr("scheduled")}{" "}{dayRequests.length === 1 ? tr("arrival") : tr("arrivals")}
         </p>
         {dayRequests.length ? (
           <div className="mt-4 space-y-3">
@@ -87,16 +87,15 @@ export function RequestArrivalCalendar({
                   {request.location || "Location not provided"}
                 </span>
                 <span className="mt-2 block text-xs text-muted-foreground">
-                  {request.status === "in_progress" ? "In progress" : "Agreed"} · View request →
-                </span>
+                  {request.status === "in_progress" ? tr("In progress") : tr("Agreed")}{" "}{tr("· View request →")}</span>
               </button>
             ))}
           </div>
         ) : (
           <p className="mt-5 text-sm text-muted-foreground">
             {arrivals.length
-              ? "No arrivals scheduled for this date. Select a marked date to view its requests."
-              : "No handyman arrivals scheduled yet. Agreed requests with an arrival date will appear here."}
+              ? tr("No arrivals scheduled for this date. Select a marked date to view its requests.")
+              : tr("No handyman arrivals scheduled yet. Agreed requests with an arrival date will appear here.")}
           </p>
         )}
       </div>

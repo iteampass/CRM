@@ -1,3 +1,4 @@
+import { useI18n } from "@/lib/i18n";
 import { useState, type FormEvent } from 'react'
 import { useServerFn } from '@tanstack/react-start'
 import { useQueryClient } from '@tanstack/react-query'
@@ -21,6 +22,7 @@ export function ProfileForm({
   onClose?: () => void
   embedded?: boolean
 }) {
+  const { t: tr, locale } = useI18n();
   const queryClient = useQueryClient()
   const save = useServerFn(updateMyProfile)
   const [firstName, setFirstName] = useState(viewer.firstName)
@@ -115,10 +117,10 @@ export function ProfileForm({
         },
       })
       await queryClient.invalidateQueries({ queryKey: ['workspace'] })
-      toast.success('Profile updated')
+      toast.success(tr('Profile updated'))
       onClose?.()
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Could not save your profile')
+      toast.error(tr(err instanceof Error ? err.message : 'Could not save your profile'))
     } finally {
       setBusy(false)
     }
@@ -129,14 +131,12 @@ export function ProfileForm({
       <div className={embedded ? 'flex items-center gap-4' : 'mt-5 flex items-center gap-4'}>
         <div className="flex size-16 items-center justify-center overflow-hidden rounded-full bg-muted text-lg font-semibold">
           {preview ? (
-            <img src={preview} alt="Profile picture" className="size-full object-cover" />
+            <img src={preview} alt={tr("Profile picture")} className="size-full object-cover" />
           ) : (
             viewer.initials
           )}
         </div>
-        <label className="cursor-pointer rounded-md border border-input px-3 py-2 text-sm hover:bg-accent">
-          Change picture
-          <input
+        <label className="cursor-pointer rounded-md border border-input px-3 py-2 text-sm hover:bg-accent">{tr("Change picture")}<input
             type="file"
             accept="image/*"
             className="hidden"
@@ -147,63 +147,63 @@ export function ProfileForm({
 
       <div className={embedded ? 'mt-6 grid gap-4 md:grid-cols-2' : 'contents'}>
         <div>
-          <label className="mt-5 block text-sm font-medium md:mt-0">First name</label>
+          <label className="mt-5 block text-sm font-medium md:mt-0">{tr("First name")}</label>
           <input value={firstName} onChange={(e) => setFirstName(e.target.value)} required className={`mt-1 ${inputClass}`} />
         </div>
         <div>
-          <label className="mt-5 block text-sm font-medium md:mt-0">Last name</label>
+          <label className="mt-5 block text-sm font-medium md:mt-0">{tr("Last name")}</label>
           <input value={lastName} onChange={(e) => setLastName(e.target.value)} required className={`mt-1 ${inputClass}`} />
         </div>
       </div>
 
       <div className="mt-4">
-        <label className="block text-sm font-medium">Nickname</label>
+        <label className="block text-sm font-medium">{tr("Nickname")}</label>
         <input
           value={nickname}
           onChange={(e) => setNickname(e.target.value)}
-          placeholder="Shown instead of your name in some places"
+          placeholder={tr("Shown instead of your name in some places")}
           className={`mt-1 ${inputClass}`}
         />
       </div>
 
-      <label className="mt-4 block text-sm font-medium">Home address</label>
+      <label className="mt-4 block text-sm font-medium">{tr("Home address")}</label>
       <div className="mt-1 grid grid-cols-12 gap-2">
         <input
           value={street}
           onChange={(e) => setStreet(e.target.value)}
-          placeholder="Street"
+          placeholder={tr("Street")}
           className={`col-span-6 ${inputClass}`}
         />
         <input
           value={streetNumber}
           onChange={(e) => setStreetNumber(e.target.value)}
-          placeholder="Number"
+          placeholder={tr("Number")}
           className={`col-span-3 ${inputClass}`}
         />
         <input
           value={floor}
           onChange={(e) => setFloor(e.target.value)}
-          placeholder="Floor"
+          placeholder={tr("Floor")}
           className={`col-span-3 ${inputClass}`}
         />
         <input
           value={zipCode}
           onChange={(e) => setZipCode(e.target.value)}
-          placeholder="ZIP code"
+          placeholder={tr("ZIP code")}
           className={`col-span-4 ${inputClass}`}
         />
         <input
           value={city}
           onChange={(e) => setCity(e.target.value)}
-          placeholder="City"
+          placeholder={tr("City")}
           className={`col-span-8 ${inputClass}`}
         />
         <CountrySelect value={countryCode} onChange={changeCountry} className="col-span-12" />
       </div>
 
       <div className="mt-4 flex items-center justify-between">
-        <label className="text-sm font-medium">Phone numbers</label>
-        <span className="text-xs text-muted-foreground">max 3</span>
+        <label className="text-sm font-medium">{tr("Phone numbers")}</label>
+        <span className="text-xs text-muted-foreground">{tr("max 3")}</span>
       </div>
       <div className="mt-1 space-y-2">
         {phones.map((phone, i) => (
@@ -217,7 +217,7 @@ export function ProfileForm({
             {phones.length > 1 && (
               <button
                 type="button"
-                aria-label="Remove phone number"
+                aria-label={tr("Remove phone number")}
                 onClick={() => setPhones(phones.filter((_, idx) => idx !== i))}
                 className="rounded-md border border-input px-2 hover:bg-accent"
               >
@@ -232,8 +232,7 @@ export function ProfileForm({
             onClick={() => setPhones([...phones, dial ? `${dial} ` : ''])}
             className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
           >
-            <Plus className="size-4" /> Add number
-          </button>
+            <Plus className="size-4" />{tr("Add number")}</button>
         )}
       </div>
 
@@ -241,50 +240,50 @@ export function ProfileForm({
         <>
           <div className={embedded ? 'mt-6 grid gap-4 md:grid-cols-2' : 'contents'}>
             <div>
-              <label className="mt-4 block text-sm font-medium md:mt-0">Job title</label>
+              <label className="mt-4 block text-sm font-medium md:mt-0">{tr("Job title")}</label>
               <input
                 value={headline}
                 onChange={(e) => setHeadline(e.target.value)}
-                placeholder="e.g. Electrician"
+                placeholder={tr("e.g. Electrician")}
                 className={`mt-1 ${inputClass}`}
               />
             </div>
             <div>
-              <label className="mt-4 block text-sm font-medium md:mt-0">Daily rate ($)</label>
+              <label className="mt-4 block text-sm font-medium md:mt-0">{tr("Daily rate ($)")}</label>
               <input
                 type="number"
                 min="0"
                 step="1"
                 value={dailyRate}
                 onChange={(e) => setDailyRate(e.target.value)}
-                placeholder="e.g. 150"
+                placeholder={tr("e.g. 150")}
                 className={`mt-1 ${inputClass}`}
               />
             </div>
           </div>
 
-          <label className="mt-4 block text-sm font-medium">Service area</label>
+          <label className="mt-4 block text-sm font-medium">{tr("Service area")}</label>
           <input
             value={location}
             onChange={(e) => setLocation(e.target.value)}
-            placeholder="e.g. Downtown, North district"
+            placeholder={tr("e.g. Downtown, North district")}
             className={`mt-1 ${inputClass}`}
           />
 
-          <label className="mt-4 block text-sm font-medium">Specialties</label>
+          <label className="mt-4 block text-sm font-medium">{tr("Specialties")}</label>
           <input
             value={specialties}
             onChange={(e) => setSpecialties(e.target.value)}
-            placeholder="e.g. Plumbing, Tiling, Painting"
+            placeholder={tr("e.g. Plumbing, Tiling, Painting")}
             className={`mt-1 ${inputClass}`}
           />
 
-          <label className="mt-4 block text-sm font-medium">Bio</label>
+          <label className="mt-4 block text-sm font-medium">{tr("Bio")}</label>
           <textarea
             value={bio}
             onChange={(e) => setBio(e.target.value)}
             rows={3}
-            placeholder="Tell clients a bit about yourself and your experience."
+            placeholder={tr("Tell clients a bit about yourself and your experience.")}
             className={`mt-1 resize-y ${inputClass}`}
           />
 
@@ -296,8 +295,8 @@ export function ProfileForm({
               className="mt-0.5"
             />
             <span>
-              <strong className="block font-medium">Publicly visible</strong>
-              <span className="text-muted-foreground">Show my profile in the handyman directory.</span>
+              <strong className="block font-medium">{tr("Publicly visible")}</strong>
+              <span className="text-muted-foreground">{tr("Show my profile in the handyman directory.")}</span>
             </span>
           </label>
 
@@ -309,8 +308,8 @@ export function ProfileForm({
               className="mt-0.5"
             />
             <span>
-              <strong className="block font-medium">Available for work</strong>
-              <span className="text-muted-foreground">Clients can see that you are taking new requests.</span>
+              <strong className="block font-medium">{tr("Available for work")}</strong>
+              <span className="text-muted-foreground">{tr("Clients can see that you are taking new requests.")}</span>
             </span>
           </label>
         </>
@@ -322,24 +321,21 @@ export function ProfileForm({
             type="button"
             onClick={onClose}
             className="rounded-md border border-input px-4 py-2 text-sm hover:bg-accent"
-          >
-            Cancel
-          </button>
+          >{tr("Cancel")}</button>
         )}
         <button
           type="submit"
           disabled={busy}
           className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-60"
         >
-          {busy && <Loader2 className="size-4 animate-spin" />}
-          Save changes
-        </button>
+          {busy && <Loader2 className="size-4 animate-spin" />}{" "}{tr("Save changes")}</button>
       </div>
     </form>
   )
 }
 
 export function ProfileDialog({ viewer, onClose }: { viewer: Viewer; onClose: () => void }) {
+  const { t: tr, locale } = useI18n();
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={onClose}>
       <div
@@ -348,10 +344,10 @@ export function ProfileDialog({ viewer, onClose }: { viewer: Viewer; onClose: ()
       >
         <div className="flex items-start justify-between">
           <div>
-            <h2 className="text-lg font-semibold">Change profile</h2>
+            <h2 className="text-lg font-semibold">{tr("Change profile")}</h2>
             <p className="text-sm text-muted-foreground">{viewer.email}</p>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close" className="rounded-md p-1 hover:bg-accent">
+          <button type="button" onClick={onClose} aria-label={tr("Close")} className="rounded-md p-1 hover:bg-accent">
             <X className="size-4" />
           </button>
         </div>

@@ -1,3 +1,4 @@
+import { useI18n } from "@/lib/i18n";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, Pause, Play } from "lucide-react";
 import heroImage from "@/assets/hero-handyman.jpg";
@@ -29,6 +30,7 @@ const slides = [
 ];
 
 export function HeroSlideshow({ background = false }: { background?: boolean }) {
+  const { t: tr, locale } = useI18n();
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const [hovered, setHovered] = useState(false);
@@ -65,7 +67,7 @@ export function HeroSlideshow({ background = false }: { background?: boolean }) 
 
   return (
     <section
-      aria-label="Home repair photos"
+      aria-label={tr("Home repair photos")}
       aria-roledescription="carousel"
       className={background ? "absolute inset-0 min-w-0" : "surface-card min-w-0 overflow-hidden p-0"}
       onMouseEnter={() => setHovered(true)}
@@ -95,7 +97,7 @@ export function HeroSlideshow({ background = false }: { background?: boolean }) 
               key={slide.src}
               role="group"
               aria-roledescription="slide"
-              aria-label={`${index + 1} of ${slides.length}: ${slide.service}`}
+              aria-label={`${index + 1} of ${slides.length}: ${tr(slide.service)}`}
               aria-hidden={index !== active}
               className={`relative w-full shrink-0 overflow-hidden bg-muted ${background ? "h-full" : "aspect-[5/4]"}`}
             >
@@ -109,7 +111,7 @@ export function HeroSlideshow({ background = false }: { background?: boolean }) 
               )}
               <img
                 src={slide.src}
-                alt={slide.alt}
+                alt={tr(slide.alt)}
                 loading={index === 0 ? "eager" : "lazy"}
                 decoding="async"
                 className={`relative h-full w-full ${slide.portrait && !background ? "object-contain" : "object-cover"}`}
@@ -120,24 +122,24 @@ export function HeroSlideshow({ background = false }: { background?: boolean }) 
       </div>
       <div className={background ? "absolute inset-x-0 bottom-5 z-20 flex justify-center" : "flex flex-wrap items-center justify-between gap-3 px-4 py-4 sm:px-5"}>
         <div className={background ? "hidden" : "min-w-0"}>
-          <p className="text-xs font-medium text-brand">{slides[active]?.service}</p>
-          <p className="mt-1 text-sm font-semibold text-foreground">{slides[active]?.title}</p>
+          <p className="text-xs font-medium text-brand">{tr(slides[active]?.service)}</p>
+          <p className="mt-1 text-sm font-semibold text-foreground">{tr(slides[active]?.title)}</p>
         </div>
         <div className={`flex items-center gap-2 ${background ? "rounded-full bg-background/95 p-2 shadow-lg" : ""}`}>
           <button
             type="button"
-            aria-label="Previous photo"
+            aria-label={tr("Previous photo")}
             className={controlClass}
             onClick={() => choose(active - 1)}
           >
             <ChevronLeft className="size-4" />
           </button>
-          <div className="flex items-center" aria-label="Choose a photo">
+          <div className="flex items-center" aria-label={tr("Choose a photo")}>
             {slides.map((slide, index) => (
               <button
                 key={slide.src}
                 type="button"
-                aria-label={`Show photo ${index + 1}: ${slide.service}`}
+                aria-label={`${tr("Show photo")} ${index + 1}: ${tr(slide.service)}`}
                 aria-current={index === active ? "true" : undefined}
                 className="flex size-7 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
                 onClick={() => choose(index)}
@@ -150,7 +152,7 @@ export function HeroSlideshow({ background = false }: { background?: boolean }) 
           </div>
           <button
             type="button"
-            aria-label="Next photo"
+            aria-label={tr("Next photo")}
             className={controlClass}
             onClick={() => choose(active + 1)}
           >
@@ -160,7 +162,7 @@ export function HeroSlideshow({ background = false }: { background?: boolean }) 
             <button
               type="button"
               data-rotation-control
-              aria-label={paused ? "Start photo rotation" : "Pause photo rotation"}
+              aria-label={paused ? tr("Start photo rotation") : tr("Pause photo rotation")}
               className={controlClass}
               onClick={() => setPaused((value) => !value)}
             >
