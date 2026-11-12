@@ -1,0 +1,250 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Talent Compass design system — warm canvas, slate blue, and signature gold.
+ * All colors are semantic tokens; components must never hardcode colors.
+ */
+
+@theme inline {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 0.75rem;
+  --radius-2xl: 1rem;
+  --radius-3xl: 1.25rem;
+  --radius-4xl: 1.5rem;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-brand-accent: var(--brand-accent);
+  --color-brand-panel: var(--brand-panel);
+  --color-brand-panel-foreground: var(--brand-panel-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-overlay: var(--overlay);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --shadow-panel: var(--panel-shadow);
+}
+
+:root {
+  --radius: 0.5rem;
+  --background: #F7F5EF;
+  --foreground: #17212B;
+  --surface: #FFFFFF;
+  --surface-muted: #F7F5EF;
+  --card: #FFFFFF;
+  --card-foreground: #17212B;
+  --popover: #FFFFFF;
+  --popover-foreground: #17212B;
+  --primary: #334E68;
+  --primary-dark: #243B53;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F7F5EF;
+  --secondary-foreground: #243B53;
+  --muted: #E1DED5;
+  --muted-foreground: #66788A;
+  --accent: #F8E9BE;
+  --accent-foreground: #17212B;
+  --brand-accent: #D9A441;
+  --brand-panel: #243B53;
+  --brand-panel-foreground: #FFFFFF;
+  --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
+  --success: #D9A441;
+  --success-foreground: #17212B;
+  --warning: #B9821E;
+  --warning-foreground: #FFFFFF;
+  --info: #66788A;
+  --info-foreground: #FFFFFF;
+  --border: #E1DED5;
+  --border-strong: #D9D6CD;
+  --input: #E1DED5;
+  --ring: #D9A441;
+  --overlay: #17212B99;
+  --chart-1: #334E68;
+  --chart-2: #D9A441;
+  --chart-3: #243B53;
+  --chart-4: #B9821E;
+  --chart-5: #66788A;
+  --panel-shadow: 0 2px 5px #17212B0F;
+  --sidebar: #243B53;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #D9A441;
+  --sidebar-primary-foreground: #17212B;
+  --sidebar-accent: #F8E9BE;
+  --sidebar-accent-foreground: #17212B;
+  --sidebar-border: #334E68;
+  --sidebar-ring: #D9A441;
+}
+
+.dark {
+  --background: #191A18;
+  --foreground: #F3F2EE;
+  --surface: #222320;
+  --surface-muted: #292A27;
+  --card: #222320;
+  --card-foreground: #F3F2EE;
+  --popover: #292A27;
+  --popover-foreground: #F3F2EE;
+  --primary: #D9A441;
+  --primary-dark: #B9821E;
+  --primary-foreground: #17212B;
+  --secondary: #292A27;
+  --secondary-foreground: #F3F2EE;
+  --muted: #292A27;
+  --muted-foreground: #A6A59F;
+  --accent: #334E68;
+  --accent-foreground: #F3F2EE;
+  --brand-accent: #D9A441;
+  --brand-panel: #222320;
+  --brand-panel-foreground: #F3F2EE;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --success: #D9A441;
+  --success-foreground: #17212B;
+  --warning: #B9821E;
+  --warning-foreground: #FFFFFF;
+  --info: #66788A;
+  --info-foreground: #FFFFFF;
+  --border: #292A27;
+  --border-strong: #3A3B37;
+  --input: #292A27;
+  --ring: #D9A441;
+  --overlay: #000000B3;
+  --chart-1: #D9A441;
+  --chart-2: #F8E9BE;
+  --chart-3: #334E68;
+  --chart-4: #B9821E;
+  --chart-5: #66788A;
+  --panel-shadow: 0 1px 2px #00000029;
+  --sidebar: #17212B;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #D9A441;
+  --sidebar-primary-foreground: #17212B;
+  --sidebar-accent: #334E68;
+  --sidebar-accent-foreground: #F3F2EE;
+  --sidebar-border: #292A27;
+  --sidebar-ring: #D9A441;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "cv02", "cv03", "cv04", "ss01";
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: var(--font-display);
+  }
+}
+
+@utility panel {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  box-shadow: var(--panel-shadow);
+}
+
+@utility label-caps {
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--color-muted-foreground);
+}
+
+@utility app-enter {
+  animation: app-fade-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@utility rise-in {
+  animation: rise-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes app-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
