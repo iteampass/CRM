@@ -8,7 +8,7 @@ import { nitro } from "nitro/vite";
 export default defineConfig(({ mode, command }) => {
   const keys = [
     "CONTACT_EMAIL_TO", "CONTACT_EMAIL_FROM", "RESEND_API_KEY", "APP_URL",
-    "SUPABASE_URL", "SUPABASE_PUBLISHABLE_KEY", "SUPABASE_ANON_KEY", "SUPABASE_SERVICE_ROLE_KEY",
+    "SUPABASE_URL", "SUPABASE_PUBLISHABLE_KEY", "SUPABASE_ANON_KEY", "SUPABASE_SECRET_KEY", "SUPABASE_SERVICE_ROLE_KEY",
     "OPENAI_API_KEY", "OPENAI_MODEL",
   ];
   const env = loadEnv(mode, process.cwd(), keys);
