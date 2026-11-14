@@ -28,12 +28,8 @@ export const createWorkspace = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const userId = context.userId;
 
-    const { data: profile } = await supabaseAdmin
-      .from("profiles")
-      .select("id, workspace_id")
-      .eq("user_id", userId)
-      .maybeSingle();
-    if (!profile) throw new Error("Your profile could not be found");
+    const { ensureTalentProfile } = await import("@/lib/talent-profile.server");
+    const profile = await ensureTalentProfile(userId);
     if (profile.workspace_id) throw new Error("You already belong to a workspace");
 
     const { data: ws, error } = await supabaseAdmin
@@ -64,12 +60,8 @@ export const redeemInvitation = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const userId = context.userId;
 
-    const { data: profile } = await supabaseAdmin
-      .from("profiles")
-      .select("id, workspace_id")
-      .eq("user_id", userId)
-      .maybeSingle();
-    if (!profile) throw new Error("Your profile could not be found");
+    const { ensureTalentProfile } = await import("@/lib/talent-profile.server");
+    const profile = await ensureTalentProfile(userId);
     if (profile.workspace_id) throw new Error("You already belong to a workspace");
 
     const { data: invite } = await supabaseAdmin
